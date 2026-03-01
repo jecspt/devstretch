@@ -23,7 +23,7 @@ class WorkoutTimer {
         }
 
         this.sounds = {
-            beep: new Audio('sounds/beep-07.wav'),
+            beep: new Audio('sounds/beep-07a.wav'),
             start: new Audio('sounds/beep-01a.wav'),
             complete: new Audio('sounds/button-2.wav'),
             pause: new Audio('sounds/pause.wav'),
