@@ -2,6 +2,9 @@
 
 **[🚀 Live Demo](https://devstretch.vercel.app)**
 
+![DevStretch boot sequence](screenshots/boot.png)
+![DevStretch workout running](screenshots/workout.png)
+
 ---
 
 ## What is this?
