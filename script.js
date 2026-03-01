@@ -319,7 +319,7 @@ class WorkoutTimer {
             this.exerciseEmoji.textContent = '🖥️';
             this.exerciseName.textContent = 'DevStretch Protocol';
             this.exerciseSubtitle.textContent = '// antiburnout system for developers';
-            this.exerciseDescription.textContent = '11 exercises. ~20 minutes. Automatic timers. Voice guidance. Your body will thank you. Click START to initialize.';
+            this.exerciseDescription.textContent = '11 exercises. ~18 minutes. Automatic timers. Voice guidance. Your body will thank you. Click START to initialize.';
             this.progressText.textContent = this.buildProgressBar(0);
             this.statCurrent.textContent = '00';
         } else {

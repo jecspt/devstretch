@@ -4,138 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevStretch — Antiburnout Protocol</title>
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#080808">
-    <meta name="background-color" content="#080808">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="DevStretch">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="DevStretch">
-    <meta name="msapplication-TileColor" content="#080808">
-    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
-    <!-- SEO -->
-    <meta name="description" content="DevStretch — an antiburnout stretch protocol for developers. 11 dev-themed exercises with automatic timers, voice guidance, and stand-up reminders.">
-    <meta name="keywords" content="developer health, burnout, stretching, RSI prevention, coding breaks, desk exercises">
-    <meta name="author" content="DevStretch">
-    <!-- OG -->
+    
+    <meta name="description" content="DevStretch — an antiburnout stretch protocol for developers. 11 dev-themed exercises.">
     <meta property="og:title" content="DevStretch — Antiburnout Protocol for Devs">
-    <meta property="og:description" content="11 dev-themed exercises. Automatic timers. Stand-up reminders. Your body filed a bug report.">
+    <meta property="og:description" content="Your body filed a bug report. Fix it with 11 dev-themed stretches.">
     <meta property="og:type" content="website">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="bootSequence">
+    <div id="bootSequence" aria-hidden="true">
         <p class="boot-line"><span class="title">DEVSTRETCH v1.0.0</span></p>
         <p class="boot-line">// antiburnout protocol for developers</p>
         <p class="boot-line">&nbsp;</p>
         <p class="boot-line">Loading exercise protocols...&nbsp;&nbsp;&nbsp;&nbsp;<span class="ok">✓ OK</span></p>
         <p class="boot-line">Initializing timer engine...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ok">✓ OK</span></p>
         <p class="boot-line">Compiling voice guidance...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ok">✓ OK</span></p>
-        <p class="boot-line">Checking notification API...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="warn">⚠ requires permission</span></p>
+        <p class="boot-line">Checking notification API...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="warn">⚠ permission req</span></p>
         <p class="boot-line">Mounting PWA service worker...&nbsp;&nbsp;&nbsp;<span class="ok">✓ OK</span></p>
         <p class="boot-line">&nbsp;</p>
         <p class="boot-line"><span class="ok">> System ready. Stay healthy, dev.</span></p>
     </div>
 
-    <div id="mainContent">
+    <div id="mainContent" style="display:none;">
         <div class="header">
             <div class="header-top">
                 <span class="app-title">▸ DevStretch</span>
                 <span class="app-version">v1.0.0</span>
             </div>
-            <div class="app-subtitle">// antiburnout protocol for developers — 11 exercises, ~20 min</div>
+            <div class="app-subtitle">// antiburnout protocol — 11 exercises</div>
         </div>
 
         <div class="status-bar">
-            <span id="statusLine">> System ready. Click START WORKOUT to initialize.</span>
+            <span id="statusLine" aria-live="polite">> System ready. Click START WORKOUT.</span>
         </div>
 
         <div class="top-controls">
             <button class="toggle-btn toggle-on" id="soundToggle">🔊 SND:ON</button>
             <button class="toggle-btn toggle-on" id="voiceToggle">🎤 VOX:ON</button>
             <button class="toggle-btn" id="notifToggle">🔔 NOTIF:OFF</button>
+            <button class="toggle-btn install-btn" id="installBtn" style="display: none;">📥 INSTALL</button>
             <button class="toggle-btn reset-btn" id="resetBtn">↺ RESET</button>
         </div>
 
         <div class="notif-row">
-            <span class="notif-label">// stand-up reminder interval:</span>
+            <span class="notif-label">// stand-up reminder:</span>
             <select class="notif-select" id="reminderSelect">
-                <option value="20">every 20 min</option>
-                <option value="30">every 30 min</option>
-                <option value="45" selected>every 45 min</option>
-                <option value="60">every 60 min</option>
-                <option value="90">every 90 min</option>
+                <option value="20">every 20m</option>
+                <option value="45" selected>every 45m</option>
+                <option value="60">every 60m</option>
             </select>
         </div>
 
         <div class="timer-display" id="timerDisplay">
-            <div class="timer-text" id="timerText">00:00</div>
+            <div class="timer-text" id="timerText" aria-live="assertive">00:00</div>
             <div class="timer-label" id="timerLabel">// awaiting input...</div>
         </div>
 
         <div class="progress-container">
-            <div id="progressText">[░░░░░░░░░░░░░░░░░░░░░░░░] 0%</div>
+            <div id="progressText" aria-hidden="true">[░░░░░░░░░░░░░░░░░░░░░░░░] 0%</div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-cell">
                 <span class="stat-value" id="statCurrent">00</span>
-                <span class="stat-label">Exercise</span>
+                <span class="stat-label">Ex</span>
             </div>
             <div class="stat-cell">
                 <span class="stat-value" id="statTotal">11</span>
                 <span class="stat-label">Total</span>
             </div>
             <div class="stat-cell">
-                <span class="stat-value" id="statTotalTime">~20m</span>
-                <span class="stat-label">Duration</span>
+                <span class="stat-value" id="statTotalTime">~18m</span>
+                <span class="stat-label">Time</span>
             </div>
             <div class="stat-cell">
                 <span class="stat-value" id="statElapsed">00:00</span>
-                <span class="stat-label">Elapsed</span>
+                <span class="stat-label">Done</span>
             </div>
         </div>
 
         <div class="exercise-panel" id="exerciseInfo">
-            <span class="section-badge" id="sectionBadge">⚙️  READY TO BOOT</span>
+            <span class="section-badge" id="sectionBadge">⚙️ READY TO BOOT</span>
             <div class="exercise-header">
                 <div class="exercise-emoji" id="exerciseEmoji">🖥️</div>
                 <div class="exercise-title-block">
                     <div class="exercise-name" id="exerciseName">DevStretch Protocol</div>
-                    <div class="exercise-subtitle" id="exerciseSubtitle">// antiburnout system for developers</div>
+                    <div class="exercise-subtitle" id="exerciseSubtitle">// body-refactoring system</div>
                 </div>
             </div>
             <hr class="exercise-divider">
             <div class="exercise-description" id="exerciseDescription">
-                11 exercises. ~20 minutes. Automatic timers. Voice guidance. Your body will thank you. Click START to initialize.
+                Click START to initialize your physical maintenance routine.
             </div>
         </div>
 
-        <div id="completionScreen">
-            <div class="completion-title">✓ WORKOUT COMPLETE</div>
+        <div id="completionScreen" style="display:none;">
+            <div class="completion-title">✓ BUILD SUCCESS</div>
             <div class="completion-time" id="completionTime">00:00</div>
             <div class="completion-sub">
-                All 11 exercises executed successfully.<br>
-                git commit -m "took care of myself today"<br>
-                git push origin main --force-with-lease<br><br>
-                <span style="color:var(--green)">// Your body and your code are both in better shape now.</span>
+                git commit -m "took care of myself"<br>
+                <span style="color:var(--green)">// Deployment to health successful.</span>
             </div>
-            <button class="completion-reset" onclick="window.location.reload()">↺ RUN AGAIN</button>
+            <button class="completion-reset" onclick="window.location.reload()">↺ REBOOT</button>
         </div>
 
         <div class="controls">
-            <button class="main-btn" id="startBtn">
-                <span class="btn-icon">▶</span>
-                <span>START WORKOUT</span>
-            </button>
-            <button class="main-btn pause-btn" id="pauseBtn">
-                <span class="btn-icon">⏸</span>
-                <span>PAUSE</span>
-            </button>
+            <button class="main-btn" id="startBtn">▶ START WORKOUT</button>
+            <button class="main-btn pause-btn" id="pauseBtn">⏸ PAUSE</button>
             <div class="nav-row">
                 <button class="nav-btn" id="prevBtn" disabled>⏮ PREV</button>
                 <button class="nav-btn" id="nextBtn" disabled>NEXT ⏭</button>
@@ -143,13 +125,13 @@
         </div>
 
         <div class="footer">
-            DEVSTRETCH v1.0.0 — built for devs, by a dev &nbsp;|&nbsp; // it's a feature, not a bug
+            DEVSTRETCH v1.0.0 — built by a dev for devs
         </div>
-
     </div>
-    <script src="exercises.js"></script>
-    <script src="notifications.js"></script>
-    <script src="script.js"></script>
-    <script src="pwa.js"></script>
+
+    <script src="exercises.js" defer></script>
+    <script src="notifications.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="pwa.js" defer></script>
 </body>
 </html>
