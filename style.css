@@ -13,7 +13,6 @@
     --border-bright: #2e2e2e;
     --text: #00ff41;
     --text-dim: #00aa2a;
-    --text-faint: #005515;
     --font: 'JetBrains Mono', 'Courier New', monospace;
 }
 
@@ -121,8 +120,8 @@ body {
 
 .app-version {
     font-size: 0.7rem;
-    color: var(--text-faint);
-    border: 1px solid var(--text-faint);
+    color: var(--text-dim);
+    border: 1px solid var(--text-dim);
     padding: 2px 6px;
 }
 
@@ -159,7 +158,7 @@ body {
     font-size: 0.7rem;
     font-weight: 600;
     background: var(--bg-surface);
-    color: var(--text-faint);
+    color: var(--text-dim);
     border: 1px solid var(--border-bright);
     padding: 5px 10px;
     cursor: pointer;
@@ -201,7 +200,7 @@ body {
 
 .notif-label {
     font-size: 0.68rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     white-space: nowrap;
 }
 
@@ -281,7 +280,7 @@ body {
 
 .timer-label {
     font-size: 0.72rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     letter-spacing: 0.06em;
 }
 
@@ -325,7 +324,7 @@ body {
 
 .stat-label {
     font-size: 0.58rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     display: block;
     margin-top: 2px;
     letter-spacing: 0.04em;
@@ -374,7 +373,7 @@ body {
 
 .exercise-subtitle {
     font-size: 0.72rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     margin-top: 3px;
     font-style: italic;
 }
@@ -455,7 +454,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.08em;
     background: var(--bg-surface);
-    color: var(--text-faint);
+    color: var(--text-dim);
     border: 1px solid var(--border-bright);
     padding: 9px 12px;
     cursor: pointer;
@@ -529,7 +528,7 @@ body {
 
 .footer {
     font-size: 0.62rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     text-align: center;
     padding: 8px 0 4px;
     letter-spacing: 0.04em;

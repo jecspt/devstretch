@@ -14,9 +14,22 @@ class WorkoutTimer {
         this.soundEnabled = true;
         this.voiceEnabled = true;
 
+        this.femaleVoice = null;
+        window.speechSynthesis.onvoiceschanged = () => {
+            const voices = window.speechSynthesis.getVoices();
+            this.femaleVoice = voices.find(v =>
+                v.lang.startsWith('en') &&
+                (v.name.includes('Samantha') ||
+                 v.name.includes('Zira') ||
+                 v.name.includes('Karen') ||
+                 v.name.includes('Google US English'))
+            ) || null;
+        };
+
         this.halfwayAnnounced = false;
         this.lastTenAnnounced = false;
         this.nextExAnnounced = false;
+
         this.rebootBtn = document.getElementById('rebootBtn');
         if (this.rebootBtn) {
             this.rebootBtn.addEventListener('click', () => this.reset());
@@ -118,18 +131,17 @@ class WorkoutTimer {
     }
 
     async requestWakeLock() {
-    try {
-        if ('wakeLock' in navigator) {
-            this.wakeLock = await navigator.wakeLock.request('screen');
-            this.setStatus('SYSTEM: Screen Wake Lock active');
-            
-            this.wakeLock.addEventListener('release', () => {
-                console.log('Wake Lock was released');
-            });
+        try {
+            if ('wakeLock' in navigator) {
+                this.wakeLock = await navigator.wakeLock.request('screen');
+                this.setStatus('SYSTEM: Screen Wake Lock active');
+                this.wakeLock.addEventListener('release', () => {
+                    console.log('Wake Lock was released');
+                });
+            }
+        } catch (err) {
+            this.setStatus(`WAKE LOCK ERROR: ${err.name}`);
         }
-    } catch (err) {
-        this.setStatus(`WAKE LOCK ERROR: ${err.name}`);
-    }
     }
 
     start() {
@@ -165,7 +177,7 @@ class WorkoutTimer {
         clearInterval(this.timer);
         this.playSound('pause');
         this.speak('Paused.');
-        this.setStatus('PAUSED — click RESUME to continue');
+        this.setStatus('PAUSED - click RESUME to continue');
         this.updateNavButtons();
     }
 
@@ -240,29 +252,37 @@ class WorkoutTimer {
                 this.speak(`Exercise ${ex.number}: ${ex.name}.`);
                 this.setStatus(`Running: ${ex.name}`);
             } else {
+                // Announce next exercise name only (short, not full description)
                 if (this.currentTime === this.restTime - 5 && !this.nextExAnnounced) {
                     const next = this.exercises[this.currentExerciseIndex + 1];
-                    if (next) { this.speak(`Next up: ${next.name}. ${next.description}`); this.nextExAnnounced = true; }
+                    if (next) { this.speak(`Next: ${next.name}.`); this.nextExAnnounced = true; }
                 }
-                if (this.currentTime === 10 && !this.lastTenAnnounced) {
+                // 10 sec warning only if rest is longer than 15 sec
+                if (this.restTime > 15 && this.currentTime === 10 && !this.lastTenAnnounced) {
                     this.speak('10 seconds. Get ready.'); this.lastTenAnnounced = true;
                 }
+                // countdown: beep always, voice only if currently enabled
                 if (this.currentTime <= 3 && this.currentTime > 0) {
-                    this.playSound('beep'); this.speak(String(this.currentTime));
+                    this.playSound('beep');
+                    if (this.voiceEnabled) this.speak(String(this.currentTime));
                 }
             }
         } else {
             const ex = this.exercises[this.currentExerciseIndex];
             const half = Math.floor(ex.duration / 2);
 
-            if (this.currentTime === half && !this.halfwayAnnounced) {
+            // Halfway only if exercise is longer than 20 sec
+            if (ex.duration > 20 && this.currentTime === half && !this.halfwayAnnounced) {
                 this.speak('Halfway there.'); this.halfwayAnnounced = true;
             }
-            if (this.currentTime === 10 && !this.lastTenAnnounced) {
+            // 10 sec warning only if exercise is longer than 20 sec
+            if (ex.duration > 20 && this.currentTime === 10 && !this.lastTenAnnounced) {
                 this.speak('10 seconds left.'); this.lastTenAnnounced = true;
             }
+            // countdown: beep always, voice only if currently enabled
             if (this.currentTime <= 3 && this.currentTime > 0) {
-                this.playSound('beep'); this.speak(String(this.currentTime));
+                this.playSound('beep');
+                if (this.voiceEnabled) this.speak(String(this.currentTime));
             }
 
             if (this.currentTime <= 0) {
@@ -271,7 +291,7 @@ class WorkoutTimer {
                 this.isResting = true;
                 this.currentTime = this.restTime;
                 this.resetFlags();
-                this.setStatus(`REST — next: ${this.exercises[this.currentExerciseIndex + 1]?.name || 'final'}`);
+                this.setStatus(`REST - next: ${this.exercises[this.currentExerciseIndex + 1]?.name || 'final'}`);
             }
         }
         this.updateDisplay();
@@ -295,7 +315,7 @@ class WorkoutTimer {
         if (this.isResting) {
             this.timerDisplay.classList.add('rest-phase');
             this.timerDisplay.classList.remove('active-phase');
-            if (this.timerLabel) this.timerLabel.textContent = '// REST — recovering...';
+            if (this.timerLabel) this.timerLabel.textContent = '// REST - recovering...';
             this.sectionBadge.textContent = '⏸  REST PERIOD';
 
             const nextIdx = this.currentExerciseIndex + 1;
@@ -312,7 +332,6 @@ class WorkoutTimer {
             this.statCurrent.textContent = String(this.currentExerciseIndex + 1).padStart(2, '0');
 
         } else if (!this.isRunning && this.currentExerciseIndex === 0 && this.currentTime === 0) {
-            // initial idle state
             this.timerDisplay.classList.remove('rest-phase', 'active-phase');
             if (this.timerLabel) this.timerLabel.textContent = '// awaiting input...';
             this.sectionBadge.textContent = '⚙️  READY TO BOOT';
@@ -361,7 +380,7 @@ class WorkoutTimer {
         this.progressText.textContent = this.buildProgressBar(100);
         this.playSound('complete');
         this.speak('Workout complete. Excellent work, developer. Your body and your code are both in better shape now.');
-        this.setStatus('COMPLETE — all exercises executed successfully');
+        this.setStatus('COMPLETE - all exercises executed successfully');
         this.notifications.sendCustomNotification('DevStretch Complete! 🎉', `You finished all 11 exercises in ${mins}:${secs}. git push --body.`);
     }
 
@@ -376,6 +395,7 @@ class WorkoutTimer {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US';
         u.rate = 0.95;
+        if (this.femaleVoice) u.voice = this.femaleVoice;
         window.speechSynthesis.speak(u);
     }
 
@@ -389,8 +409,11 @@ class WorkoutTimer {
         this.voiceEnabled = !this.voiceEnabled;
         this.voiceToggle.textContent = this.voiceEnabled ? '🎤 VOX:ON' : '🔕 VOX:OFF';
         this.voiceToggle.classList.toggle('toggle-on', this.voiceEnabled);
-        if (this.voiceEnabled) this.speak('Voice guidance enabled.');
-        else window.speechSynthesis.cancel();
+        if (this.voiceEnabled) {
+            this.speak('Voice guidance enabled.');
+        } else {
+            window.speechSynthesis.cancel();
+        }
     }
 
     async toggleNotifications() {

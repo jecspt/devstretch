@@ -6,7 +6,7 @@ const EXERCISES = [
         duration: 30,
         section: "⚙️  CORE SYSTEMS",
         emoji: "🔍",
-        description: "Turn your head slowly left and right — like reviewing code across two monitors. Hold 3 sec each side. 5 reps. Your neck has been staring at one angle for too long."
+        description: "Turn your head slowly left and right, like reviewing code across two monitors. Hold 3 sec each side. 5 reps. Your neck has been staring at one angle for too long."
     },
     {
         number: 2,
@@ -38,7 +38,7 @@ const EXERCISES = [
     {
         number: 5,
         name: "Clear Cache",
-        subtitle: "Eye Break — 10-10-10",
+        subtitle: "Eye Break: 10-10-10",
         duration: 60,
         section: "👁️  VISUAL REFRESH",
         emoji: "👁️",
@@ -60,7 +60,7 @@ const EXERCISES = [
         duration: 240,
         section: "🦴  BACKEND MAINTENANCE",
         emoji: "🚶",
-        description: "Step away from the screen. Walk around — kitchen, hallway, outside if possible. No phone. No Slack. You are temporarily offline. This is a feature, not a bug. Enjoy it."
+        description: "Step away from the screen. Walk around: kitchen, hallway, outside if possible. No phone. No Slack. You are temporarily offline. This is a feature, not a bug. Enjoy it."
     },
     {
         number: 8,
