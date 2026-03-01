@@ -2,8 +2,10 @@
 
 **[🚀 Live Demo](https://devstretch.vercel.app)**
 
-![DevStretch boot sequence](screenshots/boot.png)
-![DevStretch workout running](screenshots/workout.png)
+<p>
+  <img src="screenshots/boot.png" alt="Boot sequence" width="380">
+  <img src="screenshots/workout.png" alt="Workout running" width="380">
+</p>
 
 ---
 
