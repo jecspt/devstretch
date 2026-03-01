@@ -437,5 +437,5 @@ class WorkoutTimer {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new WorkoutTimer();
+    window.workoutTimer = new WorkoutTimer();
 });

@@ -69,7 +69,6 @@ class NotificationManager {
 
         const msg = messages[Math.floor(Math.random() * messages.length)];
 
-        // Try service worker first, fall back to direct Notification
         const swUsed = await this.showViaServiceWorker(msg.title, msg.body, 'devstretch-reminder');
         if (!swUsed) {
             try {
