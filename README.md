@@ -3,7 +3,7 @@
 **[🚀 Live Demo](https://devstretch.vercel.app)**
 
 <p>
-  <img src="screenshots/screenshot.png" alt="Boot sequence" width="700">
+  <img src="screenshots/screenshot.jpg" alt="Boot sequence" width="700">
 </p>
 
 ---
