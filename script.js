@@ -150,6 +150,7 @@ class WorkoutTimer {
         this.startBtn.style.display = 'none';
         this.pauseBtn.style.display = 'flex';
         this.updateNavButtons();
+        this.requestWakeLock();
 
         if (this.currentExerciseIndex === 0 && this.currentTime === 0 && !this.isResting) {
             this.currentTime = this.exercises[0].duration;
@@ -252,16 +253,13 @@ class WorkoutTimer {
                 this.speak(`Exercise ${ex.number}: ${ex.name}.`);
                 this.setStatus(`Running: ${ex.name}`);
             } else {
-                // Announce next exercise name only (short, not full description)
                 if (this.currentTime === this.restTime - 5 && !this.nextExAnnounced) {
                     const next = this.exercises[this.currentExerciseIndex + 1];
                     if (next) { this.speak(`Next: ${next.name}.`); this.nextExAnnounced = true; }
                 }
-                // 10 sec warning only if rest is longer than 15 sec
                 if (this.restTime > 15 && this.currentTime === 10 && !this.lastTenAnnounced) {
                     this.speak('10 seconds. Get ready.'); this.lastTenAnnounced = true;
                 }
-                // countdown: beep always, voice only if currently enabled
                 if (this.currentTime <= 3 && this.currentTime > 0) {
                     this.playSound('beep');
                     if (this.voiceEnabled) this.speak(String(this.currentTime));
@@ -271,15 +269,12 @@ class WorkoutTimer {
             const ex = this.exercises[this.currentExerciseIndex];
             const half = Math.floor(ex.duration / 2);
 
-            // Halfway only if exercise is longer than 20 sec
             if (ex.duration > 20 && this.currentTime === half && !this.halfwayAnnounced) {
                 this.speak('Halfway there.'); this.halfwayAnnounced = true;
             }
-            // 10 sec warning only if exercise is longer than 20 sec
             if (ex.duration > 20 && this.currentTime === 10 && !this.lastTenAnnounced) {
                 this.speak('10 seconds left.'); this.lastTenAnnounced = true;
             }
-            // countdown: beep always, voice only if currently enabled
             if (this.currentTime <= 3 && this.currentTime > 0) {
                 this.playSound('beep');
                 if (this.voiceEnabled) this.speak(String(this.currentTime));
