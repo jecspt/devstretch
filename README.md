@@ -1,33 +1,25 @@
-# ▸ DevStretch - Antiburnout Protocol
+# ▸ DevStretch — Antiburnout Protocol
 
 **[🚀 Live Demo](https://devstretch.vercel.app)**
 
 <p>
-  <img src="screenshots/screenshot.jpg" alt="Boot sequence" width="700">
+  <img src="screenshots/screenshot.jpg" alt="DevStretch app screenshot" width="700">
 </p>
 
----
-
-## What is this?
-
-DevStretch is a PWA built for developers who forget they have a body:)
-
-You know the feeling - you sit down to fix one bug, look up, and it's been 4 hours. Your neck is a deprecated API. Your posture has more issues than your codebase.
-
-DevStretch is 11 dev-themed exercises with automatic timers, voice guidance, and a stretch reminder countdown. ~18 minutes. Just you, your chair, and the will to not get RSI.
+A PWA for developers who forget they have a body. 11 dev-themed stretches with automatic timers, voice guidance, and a stretch reminder countdown — ~18 minutes to fix what hours of coding breaks.
 
 ---
 
 ## Features
 
-- **11 dev-themed exercises** - with names like `git commit --water`, `Lint Your Posture`, and `Deploy to Standing Position`
-- **Stretch reminder countdown** - set a 20/45/60 min timer; when it fires, an alarm and voice reminder tell you to get up. Start, pause, and reset independently of the workout
-- **Voice guidance** - tells you what to do and when (toggleable)
-- **Sound effects** - beeps, countdowns, completion sounds (toggleable)
-- **CLI progress bar** - because `[████████░░░░░░░░] 50%` is more satisfying than a boring bar
-- **Boot sequence** - because every good dev tool deserves a startup screen
-- **PWA** - installable on desktop and mobile, works offline
-- **Dark terminal aesthetic** - green on black, JetBrains Mono
+- **Stretch reminder countdown** — set a 20/45/60 min timer; alarm + voice fires when time is up. Start, pause, and reset independently of the workout
+- **11 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Deploy to Standing Position`, and more
+- **Voice guidance** — announces each exercise, halfway points, and countdowns (toggleable)
+- **Sound effects** — beeps, countdowns, completion sounds (toggleable)
+- **CLI progress bar** — `[████████░░░░░░░░] 50%`
+- **Boot sequence** — because every good dev tool needs a startup screen
+- **PWA** — installable on desktop and mobile, works fully offline
+- **Dark terminal aesthetic** — green on black, JetBrains Mono
 
 ---
 
@@ -49,29 +41,58 @@ DevStretch is 11 dev-themed exercises with automatic timers, voice guidance, and
 
 ---
 
+## Usage
+
+### Running locally
+
+Any static file server works — no build step required:
+
+```bash
+npx serve .
+# or
+python -m http.server 8080
+```
+
+Then open `http://localhost:8080`. Hard-refresh (`Ctrl+Shift+R`) after changes to bypass the service worker cache.
+
+### Testing the stretch reminder
+
+1. Select an interval (20/45/60 min) in the reminder row
+2. Click `▶ START` — the main timer display counts down
+3. Try `⏸ PAUSE` and `↺ RESET`
+4. When the countdown hits zero, an alarm plays and voice says it's time to stretch
+
+To test the fired state instantly, open the browser console and run:
+
+```javascript
+window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
+```
+
+---
+
 ## Stack
 
-- **Vanilla HTML / CSS / JS** - no frameworks, no build tools
-- **Web Speech API** - voice guidance
-- **Web Notifications API** - stand-up reminders via service worker
-- **Service Worker** - offline support and PWA installability
-- **JetBrains Mono** - because the font matters
+- **Vanilla HTML / CSS / JS** — no frameworks, no build tools
+- **Web Speech API** — voice guidance
+- **Web Notifications API** — stretch reminders via service worker
+- **Service Worker** — offline support and PWA installability
+- **JetBrains Mono** — because the font matters
 
 ---
 
-## Built for
+## Roadmap
 
-The [DEV Weekend Challenge](https://dev.to) - community: developers everywhere who are one bad posture day away from a doctor's visit.
+- [x] Stretch reminder countdown with start/pause/reset
+- [ ] Custom exercise editor — add your own stretches
+- [ ] Session history — track your streaks
+- [ ] Spotify / music integration — coding playlist during Offline Mode
+- [ ] More exercise sets — eyes, hands, full body
 
 ---
 
-## What's next
+## License
 
-- [ ] Custom exercise editor - add your own stretches
-- [ ] Session history - track your streaks
-- [ ] Spotify / music integration - coding playlist during Offline Mode
-- [ ] More exercise sets - eyes, hands, full body
-- [x] Stretch reminder countdown - set it, forget it, get reminded
+[MIT](LICENSE)
 
 ---
 
