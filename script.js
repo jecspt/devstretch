@@ -511,7 +511,8 @@ class WorkoutTimer {
             this.speak(`Time to stretch! Advancing to ${SETS[this.currentSetIndex].name} after this exercise.`);
             this.setStatus(`> Set advancing to Set ${SETS[this.currentSetIndex].number} — finishing current exercise`);
         } else {
-            // Auto-start the new set
+            // Resolve new set exercises before updating display, then auto-start
+            this._resolveSetExercises();
             this.start();
         }
 
@@ -523,18 +524,22 @@ class WorkoutTimer {
     }
     _resolveSetExercises() {
         const set = SETS[this.currentSetIndex];
-        this.exercises = set.exercises.map(num => EXERCISES.find(e => e.number === num));
+        this.exercises = set.exercises
+            .map(num => EXERCISES.find(e => e.number === num))
+            .filter(Boolean);
     }
 
     updateSetDisplay() {
         const set = SETS[this.currentSetIndex];
         if (this.setLabel) this.setLabel.textContent = `SET ${set.number} / ${SETS.length}`;
         if (this.setName)  this.setName.textContent  = set.name;
-        // Update stats grid to reflect the (possibly new) set
-        const totalSetTime = this.exercises.reduce((acc, ex) => acc + ex.duration, 0)
-                           + (this.exercises.length - 1) * this.restTime;
-        if (this.statTotal)     this.statTotal.textContent     = this.exercises.length;
-        if (this.statTotalTime) this.statTotalTime.textContent = `~${Math.ceil(totalSetTime / 60)}m`;
+        // Only update stats when not mid-session (running session owns the stats panel)
+        if (!this.isRunning) {
+            const totalSetTime = this.exercises.reduce((acc, ex) => acc + ex.duration, 0)
+                               + (this.exercises.length - 1) * this.restTime;
+            if (this.statTotal)     this.statTotal.textContent     = this.exercises.length;
+            if (this.statTotalTime) this.statTotalTime.textContent = `~${Math.ceil(totalSetTime / 60)}m`;
+        }
     }
 
     _prevSet() {
