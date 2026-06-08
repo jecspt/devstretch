@@ -19,11 +19,11 @@ When making changes, hard-refresh the browser (`Ctrl+Shift+R`) to bypass the ser
 
 Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are parsed):
 
-1. **`exercises.js`** — declares the global `EXERCISES` array. Each entry is a plain object with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. This is the single source of truth for workout content and timing.
+1. **`exercises.js`** — declares two globals: `EXERCISES` (11 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 curated groups of exercise numbers, ~5 min each). Both are the single source of truth for workout content and structure.
 
 2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
 
-3. **`script.js`** — defines `WorkoutTimer` class, instantiated as `window.workoutTimer` on DOMContentLoaded. Owns all timer state, the full exercise flow (active → rest → next exercise → completion), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Also holds a `ReminderTimer` instance; wires its `onTick`/`onComplete` callbacks and renders its countdown in the shared `#timerDisplay` when no workout is running. Starting the workout calls `this.reminder.reset()` — the two timers are mutually exclusive.
+3. **`script.js`** — defines `WorkoutTimer` class, instantiated as `window.workoutTimer` on DOMContentLoaded. Owns all timer state, set-based exercise playback (active → rest → next exercise → set complete), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Also holds a `ReminderTimer` instance; wires its `onTick`/`onComplete` callbacks, renders its countdown in the shared `#timerDisplay` when idle, and auto-starts the next set when the reminder fires. Starting a set calls `this.reminder.reset()` — the two timers are mutually exclusive.
 
 4. **`pwa.js`** — registers `sw.js` as a service worker and handles the `beforeinstallprompt` event to show/hide the `#installBtn`.
 
@@ -35,7 +35,9 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh (`Ctrl+Shift+R`), then try the `▶ START` / `⏸ PAUSE` / `↺ RESET` buttons in the reminder row. To test the fired state quickly, open the browser console and run `window.workoutTimer.reminder.start(0.05)` (~3 seconds).
 
-**Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. The `tick()` method decrements `currentTime` each second and handles the transitions: active exercise → rest period → next exercise → workout complete.
+**Sets** (`exercises.js` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, `start()` is called immediately.
+
+**Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. The `tick()` method decrements `currentTime` each second and handles the transitions: active exercise → rest period → next exercise → set complete.
 
 **Voice announcement flags** (`halfwayAnnounced`, `lastTenAnnounced`, `nextExAnnounced`) are reset via `resetFlags()` on every exercise/rest transition to prevent duplicate speech.
 
@@ -45,7 +47,9 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 ## Adding or Modifying Exercises
 
-Edit the `EXERCISES` array in `exercises.js`. The `WorkoutTimer` reads `this.exercises.length` and `reduce`s over `ex.duration` to compute total workout time — no other changes needed. Rest period between exercises is `this.restTime = 30` (seconds), hardcoded in the constructor.
+Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 30` (seconds), hardcoded in the constructor.
+
+To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
 
 ## Plans & Design Docs
 

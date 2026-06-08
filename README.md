@@ -4,13 +4,14 @@
   <img src="screenshots/screenshot.jpg" alt="DevStretch app screenshot" width="700">
 </p>
 
-A PWA for developers who forget they have a body. 11 dev-themed stretches with automatic timers, voice guidance, and a stretch reminder countdown — ~18 minutes to fix what hours of coding breaks.
+A PWA for developers who forget they have a body. 11 dev-themed stretches grouped into curated Sets (~5 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
 
 ---
 
 ## Features
 
-- **Stretch reminder countdown** — set a 20/45/60 min timer; alarm + voice fires when time is up. Start, pause, and reset independently of the workout
+- **Stretch reminder countdown** — set a 20/45/60 min timer; alarm + voice fires when time is up, then auto-starts the next set. Start, pause, and reset independently
+- **Sets** — curated groups of exercises (~5 min each): *Core Systems*, *Recharge*, *Shutdown Sequence*. Cycle with `◀ ▶` or start on demand
 - **11 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Deploy to Standing Position`, and more
 - **Voice guidance** — announces each exercise, halfway points, and countdowns (toggleable)
 - **Sound effects** — beeps, countdowns, completion sounds (toggleable)
@@ -66,6 +67,12 @@ To test the fired state instantly, open the browser console and run:
 window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ```
 
+### Testing Sets
+
+1. Use `◀` / `▶` to cycle between *Core Systems*, *Recharge*, and *Shutdown Sequence*
+2. Click `▶ START SET` to play the current set on demand
+3. To test auto-start on reminder fire, run `window.workoutTimer.reminder.start(0.05)` in the console — the next set starts automatically when it fires
+
 ---
 
 ## Stack
@@ -81,10 +88,8 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ## Roadmap
 
 - [x] Stretch reminder countdown with start/pause/reset
-- [ ] Custom exercise editor — add your own stretches
-- [ ] Session history — track your streaks
-- [ ] Spotify / music integration — coding playlist during Offline Mode
-- [ ] More exercise sets — eyes, hands, full body
+- [x] Create the concept of a "Set" — curated groups of exercises (~5 min each), auto-started by the reminder
+- [ ] More exercises and sets — eyes, hands, full body...
 
 ---
 
