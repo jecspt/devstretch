@@ -3,6 +3,10 @@ class WorkoutTimer {
         this.exercises = EXERCISES;
         this.notifications = new NotificationManager();
 
+        this.reminder = new ReminderTimer();
+        this.reminder.onTick = (secs, state) => { if (!this.isRunning) this.updateDisplay(); };
+        this.reminder.onComplete = () => this._onReminderComplete();
+
         this.wakeLock = null;
         this.currentExerciseIndex = 0;
         this.currentTime = 0;
@@ -71,8 +75,10 @@ class WorkoutTimer {
         this.nextBtn = document.getElementById('nextBtn');
         this.soundToggle = document.getElementById('soundToggle');
         this.voiceToggle = document.getElementById('voiceToggle');
-        this.notifToggle = document.getElementById('notifToggle');
         this.reminderSelect = document.getElementById('reminderSelect');
+        this.remStartBtn = document.getElementById('remStartBtn');
+        this.remPauseBtn = document.getElementById('remPauseBtn');
+        this.remResetBtn = document.getElementById('remResetBtn');
         this.controls = document.querySelector('.controls');
         this.exerciseInfo = document.getElementById('exerciseInfo');
         this.statusLine = document.getElementById('statusLine');
@@ -90,15 +96,9 @@ class WorkoutTimer {
         this.nextBtn.addEventListener('click', () => this.skipTo(this.currentExerciseIndex + 1));
         this.soundToggle.addEventListener('click', () => this.toggleSound());
         this.voiceToggle.addEventListener('click', () => this.toggleVoice());
-        this.notifToggle.addEventListener('click', () => this.toggleNotifications());
-        this.reminderSelect.addEventListener('change', (e) => {
-            const mins = parseInt(e.target.value);
-            this.notifications.intervalMinutes = mins;
-            if (this.notifications.isActive) {
-                this.notifications.startReminder(mins);
-                this.setStatus(`Stand-up reminder updated: every ${mins} min`);
-            }
-        });
+        this.remStartBtn.addEventListener('click', () => this._reminderStart());
+        this.remPauseBtn.addEventListener('click', () => this._reminderPause());
+        this.remResetBtn.addEventListener('click', () => this._reminderReset());
     }
 
     runBootSequence() {
@@ -146,6 +146,8 @@ class WorkoutTimer {
 
     start() {
         if (this.isRunning) return;
+        this.reminder.reset();
+        this._updateReminderButtons();
         this.isRunning = true;
         this.startBtn.style.display = 'none';
         this.pauseBtn.style.display = 'flex';
@@ -327,8 +329,6 @@ class WorkoutTimer {
             this.statCurrent.textContent = String(this.currentExerciseIndex + 1).padStart(2, '0');
 
         } else if (!this.isRunning && this.currentExerciseIndex === 0 && this.currentTime === 0) {
-            this.timerDisplay.classList.remove('rest-phase', 'active-phase');
-            if (this.timerLabel) this.timerLabel.textContent = '// awaiting input...';
             this.sectionBadge.textContent = '⚙️  READY TO BOOT';
             this.exerciseEmoji.textContent = '🖥️';
             this.exerciseName.textContent = 'DevStretch Protocol';
@@ -336,6 +336,32 @@ class WorkoutTimer {
             this.exerciseDescription.textContent = '11 exercises. ~18 minutes. Automatic timers. Voice guidance. Your body will thank you. Click START to initialize.';
             this.progressText.textContent = this.buildProgressBar(0);
             this.statCurrent.textContent = '00';
+
+            const rs = this.reminder.state;
+            if (rs === 'running') {
+                const m = String(Math.floor(this.reminder.currentSeconds / 60)).padStart(2, '0');
+                const s = String(this.reminder.currentSeconds % 60).padStart(2, '0');
+                if (this.timerText) this.timerText.textContent = `${m}:${s}`;
+                if (this.timerLabel) this.timerLabel.textContent = '// stretch reminder running...';
+                this.timerDisplay.classList.remove('rest-phase');
+                this.timerDisplay.classList.add('active-phase');
+            } else if (rs === 'paused') {
+                const m = String(Math.floor(this.reminder.currentSeconds / 60)).padStart(2, '0');
+                const s = String(this.reminder.currentSeconds % 60).padStart(2, '0');
+                if (this.timerText) this.timerText.textContent = `${m}:${s}`;
+                if (this.timerLabel) this.timerLabel.textContent = '// stretch reminder paused';
+                this.timerDisplay.classList.add('rest-phase');
+                this.timerDisplay.classList.remove('active-phase');
+            } else if (rs === 'fired') {
+                if (this.timerText) this.timerText.textContent = '00:00';
+                if (this.timerLabel) this.timerLabel.textContent = '// time to stretch! ⏰';
+                this.timerDisplay.classList.remove('rest-phase');
+                this.timerDisplay.classList.add('active-phase');
+            } else {
+                if (this.timerText) this.timerText.textContent = '00:00';
+                if (this.timerLabel) this.timerLabel.textContent = '// awaiting input...';
+                this.timerDisplay.classList.remove('rest-phase', 'active-phase');
+            }
         } else {
             this.timerDisplay.classList.remove('rest-phase');
             this.timerDisplay.classList.add('active-phase');
@@ -411,23 +437,50 @@ class WorkoutTimer {
         }
     }
 
-    async toggleNotifications() {
-        if (this.notifications.isActive) {
-            this.notifications.stopReminder();
-            this.notifToggle.textContent = '🔔 NOTIF:OFF';
-            this.notifToggle.classList.remove('toggle-on');
-            this.setStatus('Stand-up reminders disabled.');
+    async _reminderStart() {
+        const mins = parseInt(this.reminderSelect.value);
+        if (this.reminder.state === 'paused') {
+            this.reminder.resume();
         } else {
-            const mins = parseInt(this.reminderSelect.value);
-            const ok = await this.notifications.startReminder(mins);
-            if (ok) {
-                this.notifToggle.textContent = '🔔 NOTIF:ON';
-                this.notifToggle.classList.add('toggle-on');
-                this.setStatus(`Stand-up reminder set: every ${mins} min`);
-            } else {
-                this.setStatus('ERROR: Notification permission denied.');
-            }
+            await this.notifications.requestPermission();
+            this.reminder.start(mins);
         }
+        this._updateReminderButtons();
+        this.setStatus(`Stretch reminder started: ${mins} min countdown`);
+    }
+
+    _reminderPause() {
+        this.reminder.pause();
+        this._updateReminderButtons();
+        this.setStatus('Stretch reminder paused.');
+    }
+
+    _reminderReset() {
+        this.reminder.reset();
+        this._updateReminderButtons();
+        this.updateDisplay();
+        this.setStatus('Stretch reminder reset.');
+    }
+
+    _updateReminderButtons() {
+        const s = this.reminder.state;
+        this.remStartBtn.disabled = s === 'running';
+        this.remStartBtn.textContent = s === 'paused' ? '▶ RESUME' : '▶ START';
+        this.remPauseBtn.disabled = s !== 'running';
+        this.remResetBtn.disabled = s === 'idle';
+        this.remStartBtn.classList.toggle('rem-active', s !== 'running');
+        this.remPauseBtn.classList.toggle('rem-active', s === 'running');
+    }
+
+    _onReminderComplete() {
+        this.playSound('complete');
+        this.speak('Time to stretch! Stand up and take a break. Your body filed a bug report.');
+        this.notifications.sendCustomNotification(
+            'Time to Stretch! 🧘',
+            'Your DevStretch reminder fired. Stand up and take a break.'
+        );
+        this._updateReminderButtons();
+        this.setStatus('STRETCH REMINDER — time to take a break!');
     }
 }
 
