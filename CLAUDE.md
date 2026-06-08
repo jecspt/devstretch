@@ -21,15 +21,17 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 1. **`exercises.js`** — declares the global `EXERCISES` array. Each entry is a plain object with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. This is the single source of truth for workout content and timing.
 
-2. **`notifications.js`** — defines `NotificationManager` class. Manages Web Notifications permission, stand-up reminder intervals, and falls back between service worker notifications and `new Notification()`.
+2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
 
-3. **`script.js`** — defines `WorkoutTimer` class, instantiated as `window.workoutTimer` on DOMContentLoaded. Owns all timer state, the full exercise flow (active → rest → next exercise → completion), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Reads `EXERCISES` from the global scope and creates a `NotificationManager` instance internally.
+3. **`script.js`** — defines `WorkoutTimer` class, instantiated as `window.workoutTimer` on DOMContentLoaded. Owns all timer state, the full exercise flow (active → rest → next exercise → completion), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Also holds a `ReminderTimer` instance; wires its `onTick`/`onComplete` callbacks and renders its countdown in the shared `#timerDisplay` when no workout is running. Starting the workout calls `this.reminder.reset()` — the two timers are mutually exclusive.
 
 4. **`pwa.js`** — registers `sw.js` as a service worker and handles the `beforeinstallprompt` event to show/hide the `#installBtn`.
 
 **`sw.js`** runs in its own worker scope. It caches all static assets at install time (`CACHE_NAME = 'devstretch-v1.1'`) and serves them cache-first. **When adding new assets (sounds, icons, etc.), add them to the `ASSETS` array in `sw.js` and bump `CACHE_NAME`** — otherwise the old cache will be served to returning users.
 
 ## Key Patterns
+
+**ReminderTimer state machine** (`notifications.js`): `idle → running → paused → fired`. `start(minutes)` begins the countdown; `pause()`/`resume()` freeze/continue it; `reset()` returns to idle. When `currentSeconds` hits 0, state becomes `fired`, `onComplete()` is called (plays alarm + speaks + sends notification), and the timer stops — manual restart required. `WorkoutTimer` reads `this.reminder.state` in `updateDisplay()`'s idle branch to show the countdown in the main `MM:SS` block.
 
 **Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. The `tick()` method decrements `currentTime` each second and handles the transitions: active exercise → rest period → next exercise → workout complete.
 
@@ -42,6 +44,10 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 ## Adding or Modifying Exercises
 
 Edit the `EXERCISES` array in `exercises.js`. The `WorkoutTimer` reads `this.exercises.length` and `reduce`s over `ex.duration` to compute total workout time — no other changes needed. Rest period between exercises is `this.restTime = 30` (seconds), hardcoded in the constructor.
+
+## Plans & Design Docs
+
+Feature designs and implementation plans live in `docs/plans/` with the naming convention `YYYY-MM-DD-<topic>-design.md` (design) and `YYYY-MM-DD-<topic>.md` (implementation plan).
 
 ## Notifications
 

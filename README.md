@@ -14,13 +14,14 @@ DevStretch is a PWA built for developers who forget they have a body:)
 
 You know the feeling - you sit down to fix one bug, look up, and it's been 4 hours. Your neck is a deprecated API. Your posture has more issues than your codebase.
 
-DevStretch is 11 dev-themed exercises with automatic timers, voice guidance, and stand-up reminders. ~18 minutes. Just you, your chair, and the will to not get RSI.
+DevStretch is 11 dev-themed exercises with automatic timers, voice guidance, and a stretch reminder countdown. ~18 minutes. Just you, your chair, and the will to not get RSI.
 
 ---
 
 ## Features
 
 - **11 dev-themed exercises** - with names like `git commit --water`, `Lint Your Posture`, and `Deploy to Standing Position`
+- **Stretch reminder countdown** - set a 20/45/60 min timer; when it fires, an alarm and voice reminder tell you to get up. Start, pause, and reset independently of the workout
 - **Voice guidance** - tells you what to do and when (toggleable)
 - **Sound effects** - beeps, countdowns, completion sounds (toggleable)
 - **CLI progress bar** - because `[████████░░░░░░░░] 50%` is more satisfying than a boring bar
@@ -70,6 +71,7 @@ The [DEV Weekend Challenge](https://dev.to) - community: developers everywhere w
 - [ ] Session history - track your streaks
 - [ ] Spotify / music integration - coding playlist during Offline Mode
 - [ ] More exercise sets - eyes, hands, full body
+- [x] Stretch reminder countdown - set it, forget it, get reminded
 
 ---
 
