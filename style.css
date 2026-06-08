@@ -586,6 +586,61 @@ body {
     box-shadow: 0 0 16px rgba(255, 176, 0, 0.15) !important;
 }
 
+.set-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-bright);
+    padding: 8px 12px;
+}
+
+.set-nav-btn {
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border-bright);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.set-nav-btn:hover:not(:disabled) {
+    border-color: var(--green-dim);
+    color: var(--green-dim);
+}
+
+.set-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.set-info {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.set-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.set-name {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+}
+
 @media all and (display-mode: standalone) {
     body { padding-top: env(safe-area-inset-top); }
     .header { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
