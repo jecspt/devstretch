@@ -261,12 +261,12 @@ class WorkoutTimer {
             if (this.currentTime <= 0) {
                 this.isResting = false;
                 this.currentExerciseIndex++;
-                if (this.currentExerciseIndex >= this.exercises.length) {
+                // Reminder advanced the set mid-session — stop here instead of continuing
+                if (this.currentSetIndex !== this.activeSetIndex) {
                     this.completeSet();
                     return;
                 }
-                // Reminder advanced the set mid-session — stop here instead of continuing
-                if (this.currentSetIndex !== this.activeSetIndex) {
+                if (this.currentExerciseIndex >= this.exercises.length) {
                     this.completeSet();
                     return;
                 }
