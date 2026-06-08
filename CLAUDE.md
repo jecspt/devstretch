@@ -33,6 +33,8 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 **ReminderTimer state machine** (`notifications.js`): `idle → running → paused → fired`. `start(minutes)` begins the countdown; `pause()`/`resume()` freeze/continue it; `reset()` returns to idle. When `currentSeconds` hits 0, state becomes `fired`, `onComplete()` is called (plays alarm + speaks + sends notification), and the timer stops — manual restart required. `WorkoutTimer` reads `this.reminder.state` in `updateDisplay()`'s idle branch to show the countdown in the main `MM:SS` block.
 
+To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh (`Ctrl+Shift+R`), then try the `▶ START` / `⏸ PAUSE` / `↺ RESET` buttons in the reminder row. To test the fired state quickly, open the browser console and run `window.workoutTimer.reminder.start(0.05)` (~3 seconds).
+
 **Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. The `tick()` method decrements `currentTime` each second and handles the transitions: active exercise → rest period → next exercise → workout complete.
 
 **Voice announcement flags** (`halfwayAnnounced`, `lastTenAnnounced`, `nextExAnnounced`) are reset via `resetFlags()` on every exercise/rest transition to prevent duplicate speech.
