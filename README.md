@@ -1,7 +1,5 @@
 # ▸ DevStretch — Antiburnout Protocol
 
-**[🚀 Live Demo](https://devstretch.vercel.app)**
-
 <p>
   <img src="screenshots/screenshot.jpg" alt="DevStretch app screenshot" width="700">
 </p>
@@ -93,6 +91,14 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ## License
 
 [MIT](LICENSE)
+
+---
+
+## Credits
+
+Forked from [highflyer910/devstretch](https://github.com/highflyer910/devstretch) — the original project by [@highflyer910](https://github.com/highflyer910).
+
+**[🚀 Live Demo (original)](https://devstretch.vercel.app)**
 
 ---
 
