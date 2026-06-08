@@ -99,3 +99,9 @@ const EXERCISES = [
         description: "Drink water. Right now. Seriously. git commit -m 'stay hydrated' && git push. Your brain is 75% water and you have not been watering it. This commit is non-negotiable."
     }
 ];
+
+const SETS = [
+    { number: 1, name: "Core Systems",      exercises: [1, 2, 3, 4]      },
+    { number: 2, name: "Recharge",          exercises: [5, 8, 11]        },
+    { number: 3, name: "Shutdown Sequence", exercises: [2, 6, 9, 10, 11] },
+];
