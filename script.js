@@ -1,12 +1,14 @@
 class WorkoutTimer {
     constructor() {
-        this.exercises = EXERCISES;
+        this.currentSetIndex = 0;
+        this.activeSetIndex = 0;
         this.notifications = new NotificationManager();
 
         this.reminder = new ReminderTimer();
         this.reminder.onTick = (secs, state) => { if (!this.isRunning) this.updateDisplay(); };
         this.reminder.onComplete = () => this._onReminderComplete();
 
+        this._resolveSetExercises(); // sets this.exercises from SETS[0]
         this.wakeLock = null;
         this.currentExerciseIndex = 0;
         this.currentTime = 0;
@@ -82,6 +84,10 @@ class WorkoutTimer {
         this.controls = document.querySelector('.controls');
         this.exerciseInfo = document.getElementById('exerciseInfo');
         this.statusLine = document.getElementById('statusLine');
+        this.setPrevBtn = document.getElementById('setPrevBtn');
+        this.setNextBtn = document.getElementById('setNextBtn');
+        this.setLabel   = document.getElementById('setLabel');
+        this.setName    = document.getElementById('setName');
 
         const totalWorkoutTime = this.exercises.reduce((acc, ex) => acc + ex.duration, 0) + (this.exercises.length - 1) * this.restTime;
         this.statTotal.textContent = this.exercises.length;
@@ -99,6 +105,8 @@ class WorkoutTimer {
         this.remStartBtn.addEventListener('click', () => this._reminderStart());
         this.remPauseBtn.addEventListener('click', () => this._reminderPause());
         this.remResetBtn.addEventListener('click', () => this._reminderReset());
+        this.setPrevBtn.addEventListener('click', () => this._prevSet());
+        this.setNextBtn.addEventListener('click', () => this._nextSet());
     }
 
     runBootSequence() {
@@ -148,6 +156,12 @@ class WorkoutTimer {
         if (this.isRunning) return;
         this.reminder.reset();
         this._updateReminderButtons();
+
+        // Snapshot which set this session belongs to and resolve its exercises
+        this.activeSetIndex = this.currentSetIndex;
+        this._resolveSetExercises();
+        this._updateSetNavButtons();
+
         this.isRunning = true;
         this.startBtn.style.display = 'none';
         this.pauseBtn.style.display = 'flex';
@@ -157,8 +171,9 @@ class WorkoutTimer {
         if (this.currentExerciseIndex === 0 && this.currentTime === 0 && !this.isResting) {
             this.currentTime = this.exercises[0].duration;
             const ex = this.exercises[0];
-            this.speak(`Starting DevStretch. Exercise 1: ${ex.name}. ${ex.description}`);
-            this.setStatus(`Running: ${ex.name}`);
+            const setName = SETS[this.activeSetIndex].name;
+            this.speak(`Starting ${setName}. Exercise 1: ${ex.name}.`);
+            this.setStatus(`Running Set ${SETS[this.activeSetIndex].number}: ${ex.name}`);
         } else {
             const ex = this.exercises[this.currentExerciseIndex];
             this.speak(`Resuming. ${this.currentTime} seconds remaining.`);
@@ -190,9 +205,10 @@ class WorkoutTimer {
         this.currentExerciseIndex = 0;
         this.currentTime = 0;
         this.totalElapsedTime = 0;
+        this._resolveSetExercises(); // re-sync exercises to currentSetIndex
         this.startBtn.style.display = 'flex';
         this.pauseBtn.style.display = 'none';
-        this.startBtn.innerHTML = '<span class="btn-icon">▶</span><span>START WORKOUT</span>';
+        this.startBtn.innerHTML = '<span class="btn-icon">▶</span><span>START SET</span>';
         clearInterval(this.timer);
         this.resetFlags();
         this.exerciseInfo.style.display = 'block';
@@ -201,6 +217,7 @@ class WorkoutTimer {
         this.timerDisplay.classList.remove('rest-phase', 'complete-phase');
         this.updateDisplay();
         this.updateNavButtons();
+        this._updateSetNavButtons();
         this.playSound('reset');
         this.setStatus('System reset. Ready to run.');
         this.speak('Reset. Ready to start.');
@@ -245,7 +262,12 @@ class WorkoutTimer {
                 this.isResting = false;
                 this.currentExerciseIndex++;
                 if (this.currentExerciseIndex >= this.exercises.length) {
-                    this.completeWorkout();
+                    this.completeSet();
+                    return;
+                }
+                // Reminder advanced the set mid-session — stop here instead of continuing
+                if (this.currentSetIndex !== this.activeSetIndex) {
+                    this.completeSet();
                     return;
                 }
                 this.currentTime = this.exercises[this.currentExerciseIndex].duration;
@@ -329,11 +351,12 @@ class WorkoutTimer {
             this.statCurrent.textContent = String(this.currentExerciseIndex + 1).padStart(2, '0');
 
         } else if (!this.isRunning && this.currentExerciseIndex === 0 && this.currentTime === 0) {
+            const set = SETS[this.currentSetIndex];
             this.sectionBadge.textContent = '⚙️  READY TO BOOT';
             this.exerciseEmoji.textContent = '🖥️';
-            this.exerciseName.textContent = 'DevStretch Protocol';
-            this.exerciseSubtitle.textContent = '// antiburnout system for developers';
-            this.exerciseDescription.textContent = '11 exercises. ~18 minutes. Automatic timers. Voice guidance. Your body will thank you. Click START to initialize.';
+            this.exerciseName.textContent = `Set ${set.number} — ${set.name}`;
+            this.exerciseSubtitle.textContent = `// ${this.exercises.length} exercises`;
+            this.exerciseDescription.textContent = `${this.exercises.map(e => e.name).join(' → ')}. Click START SET to begin.`;
             this.progressText.textContent = this.buildProgressBar(0);
             this.statCurrent.textContent = '00';
 
@@ -384,7 +407,7 @@ class WorkoutTimer {
         this.nextBtn.disabled = this.currentExerciseIndex === this.exercises.length - 1;
     }
 
-    completeWorkout() {
+    completeSet() {
         clearInterval(this.timer);
         this.isRunning = false;
         this.timerDisplay.classList.remove('rest-phase', 'active-phase');
@@ -399,10 +422,16 @@ class WorkoutTimer {
         document.getElementById('completionTime').textContent = `${mins}:${secs}`;
         completionEl.style.display = 'block';
         this.progressText.textContent = this.buildProgressBar(100);
+
+        const setName = SETS[this.activeSetIndex].name;
         this.playSound('complete');
-        this.speak('Workout complete. Excellent work, developer. Your body and your code are both in better shape now.');
-        this.setStatus('COMPLETE - all exercises executed successfully');
-        this.notifications.sendCustomNotification('DevStretch Complete! 🎉', `You finished all 11 exercises in ${mins}:${secs}. git push --body.`);
+        this.speak(`Set complete. ${setName} done. Excellent work, developer.`);
+        this.setStatus(`COMPLETE — ${setName} finished successfully`);
+        this.notifications.sendCustomNotification(
+            'DevStretch Set Complete! 🎉',
+            `${setName} finished in ${mins}:${secs}. git push --body.`
+        );
+        this._updateSetNavButtons();
     }
 
     playSound(type) {
@@ -473,14 +502,61 @@ class WorkoutTimer {
     }
 
     _onReminderComplete() {
-        this.playSound('complete');
-        this.speak('Time to stretch! Stand up and take a break. Your body filed a bug report.');
+        this.currentSetIndex = (this.currentSetIndex + 1) % SETS.length;
+        this.updateSetDisplay();
+
+        if (this.isRunning) {
+            // Silent advance — tick() catches divergence at next exercise boundary
+            this.playSound('complete');
+            this.speak(`Time to stretch! Advancing to ${SETS[this.currentSetIndex].name} after this exercise.`);
+            this.setStatus(`> Set advancing to Set ${SETS[this.currentSetIndex].number} — finishing current exercise`);
+        } else {
+            // Auto-start the new set
+            this.start();
+        }
+
         this.notifications.sendCustomNotification(
             'Time to Stretch! 🧘',
-            'Your DevStretch reminder fired. Stand up and take a break.'
+            `Up next: ${SETS[this.currentSetIndex].name}. Stand up and stretch!`
         );
         this._updateReminderButtons();
-        this.setStatus('STRETCH REMINDER — time to take a break!');
+    }
+    _resolveSetExercises() {
+        const set = SETS[this.currentSetIndex];
+        this.exercises = set.exercises.map(num => EXERCISES.find(e => e.number === num));
+    }
+
+    updateSetDisplay() {
+        const set = SETS[this.currentSetIndex];
+        if (this.setLabel) this.setLabel.textContent = `SET ${set.number} / ${SETS.length}`;
+        if (this.setName)  this.setName.textContent  = set.name;
+        // Update stats grid to reflect the (possibly new) set
+        const totalSetTime = this.exercises.reduce((acc, ex) => acc + ex.duration, 0)
+                           + (this.exercises.length - 1) * this.restTime;
+        if (this.statTotal)     this.statTotal.textContent     = this.exercises.length;
+        if (this.statTotalTime) this.statTotalTime.textContent = `~${Math.ceil(totalSetTime / 60)}m`;
+    }
+
+    _prevSet() {
+        if (this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0) return;
+        this.currentSetIndex = (this.currentSetIndex - 1 + SETS.length) % SETS.length;
+        this._resolveSetExercises();
+        this.updateSetDisplay();
+        this.updateDisplay();
+    }
+
+    _nextSet() {
+        if (this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0) return;
+        this.currentSetIndex = (this.currentSetIndex + 1) % SETS.length;
+        this._resolveSetExercises();
+        this.updateSetDisplay();
+        this.updateDisplay();
+    }
+
+    _updateSetNavButtons() {
+        const locked = this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0;
+        if (this.setPrevBtn) this.setPrevBtn.disabled = locked;
+        if (this.setNextBtn) this.setNextBtn.disabled = locked;
     }
 }
 
