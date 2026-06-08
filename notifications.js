@@ -100,3 +100,65 @@ class NotificationManager {
         }
     }
 }
+
+class ReminderTimer {
+    constructor() {
+        this.totalSeconds = 0;
+        this.currentSeconds = 0;
+        this.state = 'idle'; // 'idle' | 'running' | 'paused' | 'fired'
+        this._interval = null;
+        this.onTick = null;     // (seconds, state) => void — called each second and on state changes
+        this.onComplete = null; // () => void — called when countdown hits 0
+    }
+
+    start(minutes) {
+        if (this.state === 'running') return;
+        this.totalSeconds = minutes * 60;
+        this.currentSeconds = this.totalSeconds;
+        this.state = 'running';
+        this._clearInterval();
+        this._interval = setInterval(() => this._tick(), 1000);
+        if (this.onTick) this.onTick(this.currentSeconds, this.state);
+    }
+
+    resume() {
+        if (this.state !== 'paused') return;
+        this.state = 'running';
+        this._interval = setInterval(() => this._tick(), 1000);
+        if (this.onTick) this.onTick(this.currentSeconds, this.state);
+    }
+
+    pause() {
+        if (this.state !== 'running') return;
+        this.state = 'paused';
+        this._clearInterval();
+        if (this.onTick) this.onTick(this.currentSeconds, this.state);
+    }
+
+    reset() {
+        this._clearInterval();
+        this.currentSeconds = 0;
+        this.state = 'idle';
+        if (this.onTick) this.onTick(0, 'idle');
+    }
+
+    _tick() {
+        this.currentSeconds--;
+        if (this.currentSeconds <= 0) {
+            this.currentSeconds = 0;
+            this.state = 'fired';
+            this._clearInterval();
+            if (this.onTick) this.onTick(0, 'fired');
+            if (this.onComplete) this.onComplete();
+        } else {
+            if (this.onTick) this.onTick(this.currentSeconds, this.state);
+        }
+    }
+
+    _clearInterval() {
+        if (this._interval) {
+            clearInterval(this._interval);
+            this._interval = null;
+        }
+    }
+}

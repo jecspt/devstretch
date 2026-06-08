@@ -196,6 +196,7 @@ body {
     gap: 6px;
     margin-bottom: 8px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .notif-label {
@@ -212,11 +213,49 @@ body {
     border: 1px solid var(--border-bright);
     padding: 4px 8px;
     cursor: pointer;
+    width: 68px;
+}
+
+.notif-select option {
+    background: var(--bg-surface);
+}
+
+.rem-controls {
+    display: flex;
+    gap: 4px;
     flex: 1;
 }
 
-.notif-select option { 
-    background: var(--bg-surface); 
+.rem-btn {
+    flex: 1;
+    font-family: var(--font);
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: var(--bg-surface);
+    color: var(--text-dim);
+    border: 1px solid var(--border-bright);
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.rem-btn:hover:not(:disabled) {
+    border-color: var(--green-dim);
+    color: var(--green-dim);
+}
+
+.rem-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.rem-btn.rem-active {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-faint);
 }
 
 .timer-display {

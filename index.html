@@ -49,18 +49,22 @@
         <div class="top-controls">
             <button class="toggle-btn toggle-on" id="soundToggle">🔊 SND:ON</button>
             <button class="toggle-btn toggle-on" id="voiceToggle">🎤 VOX:ON</button>
-            <button class="toggle-btn" id="notifToggle">🔔 NOTIF:OFF</button>
             <button class="toggle-btn install-btn" id="installBtn" style="display: none;">📥 INSTALL</button>
             <button class="toggle-btn reset-btn" id="resetBtn">↺ RESET</button>
         </div>
 
         <div class="notif-row">
-            <span class="notif-label">// stand-up reminder:</span>
+            <span class="notif-label">// remind me in:</span>
             <select class="notif-select" id="reminderSelect">
-                <option value="20">every 20m</option>
-                <option value="45" selected>every 45m</option>
-                <option value="60">every 60m</option>
+                <option value="20">20m</option>
+                <option value="45" selected>45m</option>
+                <option value="60">60m</option>
             </select>
+            <div class="rem-controls">
+                <button class="rem-btn rem-active" id="remStartBtn">▶ START</button>
+                <button class="rem-btn" id="remPauseBtn" disabled>⏸ PAUSE</button>
+                <button class="rem-btn" id="remResetBtn" disabled>↺ RESET</button>
+            </div>
         </div>
 
         <div class="timer-display" id="timerDisplay">
