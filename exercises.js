@@ -97,11 +97,47 @@ const EXERCISES = [
         section: "🧘  SHUTDOWN SEQUENCE",
         emoji: "💧",
         description: "Drink water. Right now. Seriously. git commit -m 'stay hydrated' && git push. Your brain is 75% water and you have not been watering it. This commit is non-negotiable."
+    },
+    {
+        number: 12,
+        name: "Full Stack Reach",
+        subtitle: "Deep Squat Rotation",
+        duration: 50,
+        section: "⚙️  CORE SYSTEMS",
+        emoji: "📡",
+        description: "Feet wide, drop into a deep squat. Place one hand on the ground, reach the other arm straight up while rotating your chest toward the ceiling. Hold 5 sec. Switch sides. 5 reps each. Full-stack mobility — from the lowest layer all the way to the top of the architecture."
+    },
+    {
+        number: 13,
+        name: "Building the Core",
+        subtitle: "Squats",
+        duration: 40,
+        section: "⚙️  CORE SYSTEMS",
+        emoji: "🦵",
+        description: "Stand with feet shoulder-width apart. Lower into a squat as if sitting back into a chair. Keep chest up and knees over toes. Rise back up. 2 sets × 15 reps. Strengthen the core of your body and your codebase."
+    },
+    {
+        number: 14,
+        name: "Building the Core",
+        subtitle: "Planks",
+        duration: 40,
+        section: "⚙️  CORE SYSTEMS",
+        emoji: "🏋️",
+        description: "Forearms on the ground, body in a straight line from head to heels. Engage your core and hold. 3 sets × 30 sec. Strengthen the core of your body and your codebase."
+    },
+    {
+        number: 15,
+        name: "Crawl Protocol",
+        subtitle: "Quadruped Hold",
+        duration: 45,
+        section: "🦴  BACKEND MAINTENANCE",
+        emoji: "🕷️",
+        description: "Hands and knees on the floor — wrists under shoulders, knees under hips. Back flat like a table, no sagging. Hold 30 sec breathing steadily. For extra credit: extend opposite arm and leg and hold 5 sec each side. Your core infrastructure needs as much maintenance as your codebase."
     }
 ];
 
 const SETS = [
-    { number: 1, name: "Core Systems",      exercises: [1, 2, 3, 4]      },
-    { number: 2, name: "Recharge",          exercises: [5, 8, 11]        },
-    { number: 3, name: "Shutdown Sequence", exercises: [2, 6, 9, 10, 11] },
+    { number: 1, name: "Core Systems",      exercises: [1, 2, 3, 4, 12]      },
+    { number: 2, name: "Recharge",          exercises: [5, 8, 11, 12]        },
+    { number: 3, name: "Shutdown Sequence", exercises: [2, 6, 9, 10, 11, 12] },
 ];
