@@ -1,8 +1,5 @@
 # ▸ DevStretch — Antiburnout Protocol
 
-<p>
-  <img src="screenshots/screenshot.jpg" alt="DevStretch app screenshot" width="700">
-</p>
 
 A PWA for developers who forget they have a body. 15 dev-themed exercises organized into 3 progressive Sets (6–11 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
 
