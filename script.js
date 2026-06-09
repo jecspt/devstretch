@@ -35,6 +35,7 @@ class WorkoutTimer {
         this.halfwayAnnounced = false;
         this.lastTenAnnounced = false;
         this.nextExAnnounced = false;
+        this._nagTimer = null;
 
         this.rebootBtn = document.getElementById('rebootBtn');
         if (this.rebootBtn) {
@@ -154,6 +155,7 @@ class WorkoutTimer {
 
     start() {
         if (this.isRunning) return;
+        this._clearNagTimer();
         this.reminder.reset();
         this._updateReminderButtons();
 
@@ -502,10 +504,11 @@ class WorkoutTimer {
     }
 
     _reminderReset() {
+        this._clearNagTimer();
         this.reminder.reset();
         this._updateReminderButtons();
         this.updateDisplay();
-        this.setStatus('Stretch reminder reset.');
+        this.setStatus('Stretch reminder dismissed.');
     }
 
     _updateReminderButtons() {
@@ -528,9 +531,12 @@ class WorkoutTimer {
             this.speak(`Time to stretch! Advancing to ${SETS[this.currentSetIndex].name} after this exercise.`);
             this.setStatus(`> Set advancing to Set ${SETS[this.currentSetIndex].number} — finishing current exercise`);
         } else {
-            // Resolve new set exercises before updating display, then auto-start
+            // Notify but don't auto-start — user must click START SET or dismiss
             this._resolveSetExercises();
-            this.start();
+            this.updateDisplay();
+            this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready. Start when you can.`);
+            this.setStatus(`⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)`);
+            this._startNagTimer();
         }
 
         this.notifications.sendCustomNotification(
@@ -538,6 +544,27 @@ class WorkoutTimer {
             `Up next: ${SETS[this.currentSetIndex].name}. Stand up and stretch!`
         );
         this._updateReminderButtons();
+    }
+
+    _startNagTimer() {
+        this._clearNagTimer();
+        this._nagTimer = setTimeout(() => this._fireNag(), 3 * 60 * 1000);
+    }
+
+    _fireNag() {
+        if (this.isRunning) { this._nagTimer = null; return; }
+        this.playSound('complete');
+        this.speak(`Still time to stretch! ${SETS[this.currentSetIndex].name} is waiting for you.`);
+        this.setStatus(`⏰ Reminder: stretch time! Click START SET, or ↺ to dismiss`);
+        this.notifications.sendCustomNotification(
+            '🧘 Still time to stretch!',
+            `${SETS[this.currentSetIndex].name} is waiting. Start when ready.`
+        );
+        this._nagTimer = setTimeout(() => this._fireNag(), 3 * 60 * 1000);
+    }
+
+    _clearNagTimer() {
+        if (this._nagTimer) { clearTimeout(this._nagTimer); this._nagTimer = null; }
     }
     _resolveSetExercises() {
         const set = SETS[this.currentSetIndex];
