@@ -411,27 +411,55 @@ class WorkoutTimer {
         clearInterval(this.timer);
         this.isRunning = false;
         this.timerDisplay.classList.remove('rest-phase', 'active-phase');
-        this.timerDisplay.classList.add('complete-phase');
-        this.exerciseInfo.style.display = 'none';
-        this.controls.style.display = 'none';
 
         const mins = String(Math.floor(this.totalElapsedTime / 60)).padStart(2, '0');
         const secs = String(this.totalElapsedTime % 60).padStart(2, '0');
-
-        const completionEl = document.getElementById('completionScreen');
-        document.getElementById('completionTime').textContent = `${mins}:${secs}`;
-        completionEl.style.display = 'block';
-        this.progressText.textContent = this.buildProgressBar(100);
-
         const setName = SETS[this.activeSetIndex].name;
+        const isLastSet = this.activeSetIndex === SETS.length - 1;
+
         this.playSound('complete');
-        this.speak(`Set complete. ${setName} done. Excellent work, developer.`);
-        this.setStatus(`COMPLETE — ${setName} finished successfully`);
         this.notifications.sendCustomNotification(
             'DevStretch Set Complete! 🎉',
             `${setName} finished in ${mins}:${secs}. git push --body.`
         );
-        this._updateSetNavButtons();
+
+        if (isLastSet) {
+            // All sets done — show full reboot/completion screen
+            this.timerDisplay.classList.add('complete-phase');
+            this.exerciseInfo.style.display = 'none';
+            this.controls.style.display = 'none';
+            document.getElementById('completionTime').textContent = `${mins}:${secs}`;
+            document.getElementById('completionScreen').style.display = 'block';
+            this.progressText.textContent = this.buildProgressBar(100);
+            this.speak(`All sets complete! ${setName} done. Excellent work, developer.`);
+            this.setStatus(`ALL SETS COMPLETE — ${setName} finished in ${mins}:${secs}`);
+            this._updateSetNavButtons();
+        } else {
+            // More sets remain — advance to next set and return to ready state
+            const nextIndex = this.activeSetIndex + 1;
+            this.currentSetIndex = nextIndex;
+            this._resolveSetExercises();
+            this.updateSetDisplay();
+
+            this.isResting = false;
+            this.currentExerciseIndex = 0;
+            this.currentTime = 0;
+            this.totalElapsedTime = 0;
+            this.startBtn.style.display = 'flex';
+            this.pauseBtn.style.display = 'none';
+            this.startBtn.innerHTML = '<span class="btn-icon">▶</span><span>START SET</span>';
+            this.resetFlags();
+            this.exerciseInfo.style.display = 'block';
+            this.controls.style.display = 'flex';
+            this.timerDisplay.classList.remove('complete-phase');
+            this.updateDisplay();
+            this.updateNavButtons();
+            this._updateSetNavButtons();
+
+            const nextName = SETS[nextIndex].name;
+            this.speak(`${setName} complete. Excellent work! Up next: ${nextName}. Click Start Set when ready.`);
+            this.setStatus(`SET COMPLETE — advancing to Set ${SETS[nextIndex].number}: ${nextName}`);
+        }
     }
 
     playSound(type) {
