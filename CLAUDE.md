@@ -19,7 +19,7 @@ When making changes, hard-refresh the browser (`Ctrl+Shift+R`) to bypass the ser
 
 Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are parsed):
 
-1. **`exercises.js`** — declares two globals: `EXERCISES` (11 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 curated groups of exercise numbers, ~5 min each). Both are the single source of truth for workout content and structure.
+1. **`exercises.js`** — declares two globals: `EXERCISES` (15 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 progressive groups — *Building* ~6 min, *Committing* ~6 min, *Pushing* ~11 min). Both are the single source of truth for workout content and structure.
 
 2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
 
@@ -47,7 +47,7 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 ## Adding or Modifying Exercises
 
-Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 30` (seconds), hardcoded in the constructor.
+Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 5` (seconds), hardcoded in the constructor — a single voice cue fires at exercise end ("Prepare for next exercise." / "Prepare for next iteration." on the last exercise) with no countdown during the break.
 
 To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
 

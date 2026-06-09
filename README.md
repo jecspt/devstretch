@@ -74,7 +74,7 @@ Each set covers all sections, with 💧 always as the last exercise.
 |-----|-----------|-----------|-------|
 | 1 — **Building** | 1 → 2 → 3 → 5 → 6 → 8 → 10 → 💧 | ~6 min | Lightest; gentle upper-body warm-up only |
 | 2 — **Committing** | 4 → 5 → 12 → 15 → 8 → 9 → 💧 | ~6 min | Moderate; lower body + core stability |
-| 3 — **Pushing** | 5 → 4 → 12 → 13 → 14 → 8 → 9 → 7 → 💧 | ~11 min | Hardest; squats + planks + 4-min walk. Sweat mandatory |
+| 3 — **Pushing** | 5 → 4 → 12 → 13 → 14 → 8 → 9 → 💧 → 🚶‍➡️ | ~11 min | Hardest; squats + planks + 4-min walk. Sweat mandatory |
 
 ---
 

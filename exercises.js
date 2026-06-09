@@ -141,6 +141,6 @@ const SETS = [
     { number: 1, name: "Building",   exercises: [1, 2, 3, 5, 6, 8, 10, 11] },
     // ~7 min  — moderate; sit-to-stand, deep squat rotation, quadruped, breathing
     { number: 2, name: "Committing", exercises: [4, 5, 12, 15, 8, 9, 11]   },
-    // ~12 min — hardest; eye reset → warmup → 4-min walk → squat rotation → squats → planks → recovery
-    { number: 3, name: "Pushing",    exercises: [5, 4, 12, 13, 14, 8, 9, 7, 11] },
+    // ~11 min — hardest; eye reset → warmup → squat rotation → squats → planks → breathing → stretch → water → 4-min walk
+    { number: 3, name: "Pushing",    exercises: [5, 4, 12, 13, 14, 8, 9, 11, 7] },
 ];
