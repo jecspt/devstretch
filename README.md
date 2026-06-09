@@ -19,43 +19,19 @@ A PWA for developers who forget they have a body. 15 dev-themed exercises organi
 
 ---
 
-## Exercises
+## Exercises & Sets
 
-| # | Dev Name | Real Name |
-|---|----------|-----------|
-| 1 | Review That Code | Neck Stretch |
-| 2 | Roll Back | Shoulder Rolls |
-| 3 | Prevent Carpal Tunnel PR | Wrist Stretches |
-| 4 | Deploy to Standing Position | Sit to Stand |
-| 5 | Clear Cache | Eye Break |
-| 6 | Refactor Your Spine | Seated Back Twist |
-| 7 | Offline Mode | Walk Away |
-| 8 | Memory Garbage Collection | Box Breathing |
-| 9 | Extend Your Reach | Overhead Arm Stretch |
-| 10 | Lint Your Posture | Posture Check |
-| 11 | git commit --water | Hydration Reminder |
-| 12 | Full Stack Reach | Deep Squat Rotation |
-| 13 | Building the Core | Squats |
-| 14 | Building the Core | Planks |
-| 15 | Crawl Protocol | Quadruped Hold |
-
----
-
-## Sets
-
-Each set covers all sections, with 💧 always as the last exercise.
-
-### Exercise reference
+### Exercises
 
 | # | Exercise | Section | Duration | Intensity |
 |---|----------|---------|----------|-----------|
 | 1 | Neck Stretch | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
 | 2 | Shoulder Rolls | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
 | 3 | Wrist Stretches | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
-| 4 | Sit to Stand | ⚙️ CORE SYSTEMS | 40s | 🟡 moderate |
+| 4 | Sit to Stand | ⚙️ CORE SYSTEMS | 30s | 🟡 moderate |
 | 12 | Deep Squat Rotation | ⚙️ CORE SYSTEMS | 50s | 🟡 moderate |
 | 13 | Squats | ⚙️ CORE SYSTEMS | 40s | 🔴 demanding |
-| 14 | Planks | ⚙️ CORE SYSTEMS | 40s | 🔴 demanding |
+| 14 | Planks | ⚙️ CORE SYSTEMS | 60s | 🔴 demanding |
 | 5 | Eye Break | 👁️ VISUAL REFRESH | 30s | 🟢 light |
 | 6 | Seated Back Twist | 🦴 BACKEND MAINTENANCE | 30s | 🟢 light |
 | 15 | Quadruped Hold | 🦴 BACKEND MAINTENANCE | 45s | 🟡 moderate |
@@ -63,7 +39,7 @@ Each set covers all sections, with 💧 always as the last exercise.
 | 8 | Box Breathing | 🧠 PROCESS MANAGEMENT | 120s | 🟢 light |
 | 9 | Overhead Arm Stretch | 🧘 SHUTDOWN SEQUENCE | 30s | 🟢 light |
 | 10 | Posture Check | 🧘 SHUTDOWN SEQUENCE | 20s | 🟢 light |
-| 11 | git commit --water | 🧘 SHUTDOWN SEQUENCE | 40s | 💧 always last |
+| 11 | git commit --water | 🧘 SHUTDOWN SEQUENCE | 10s | 💧 always last |
 
 ### Set composition
 
