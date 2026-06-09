@@ -14,7 +14,7 @@ class WorkoutTimer {
         this.currentTime = 0;
         this.isRunning = false;
         this.isResting = false;
-        this.restTime = 30;
+        this.restTime = 5;
         this.totalElapsedTime = 0;
         this.timer = null;
         this.soundEnabled = true;
@@ -276,18 +276,6 @@ class WorkoutTimer {
                 this.playSound('start');
                 this.speak(`Exercise ${ex.number}: ${ex.name}.`);
                 this.setStatus(`Running: ${ex.name}`);
-            } else {
-                if (this.currentTime === this.restTime - 5 && !this.nextExAnnounced) {
-                    const next = this.exercises[this.currentExerciseIndex + 1];
-                    if (next) { this.speak(`Next: ${next.name}.`); this.nextExAnnounced = true; }
-                }
-                if (this.restTime > 15 && this.currentTime === 10 && !this.lastTenAnnounced) {
-                    this.speak('10 seconds. Get ready.'); this.lastTenAnnounced = true;
-                }
-                if (this.currentTime <= 3 && this.currentTime > 0) {
-                    this.playSound('beep');
-                    if (this.voiceEnabled) this.speak(String(this.currentTime));
-                }
             }
         } else {
             const ex = this.exercises[this.currentExerciseIndex];
@@ -306,7 +294,8 @@ class WorkoutTimer {
 
             if (this.currentTime <= 0) {
                 this.playSound('complete');
-                this.speak('Exercise complete. Rest.');
+                const isLastExercise = this.currentExerciseIndex === this.exercises.length - 1;
+                this.speak(isLastExercise ? 'Prepare for next iteration.' : 'Prepare for next exercise.');
                 this.isResting = true;
                 this.currentTime = this.restTime;
                 this.resetFlags();
