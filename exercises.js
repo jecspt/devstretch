@@ -137,7 +137,10 @@ const EXERCISES = [
 ];
 
 const SETS = [
-    { number: 1, name: "Core Systems",      exercises: [1, 2, 3, 4, 12]      },
-    { number: 2, name: "Recharge",          exercises: [5, 8, 11, 12]        },
-    { number: 3, name: "Shutdown Sequence", exercises: [2, 6, 9, 10, 11, 12] },
+    // ~8 min  — lightest; gentle upper-body warm-up, no demanding Core Systems exercises
+    { number: 1, name: "Building",   exercises: [1, 2, 3, 5, 6, 8, 10, 11] },
+    // ~7 min  — moderate; sit-to-stand, deep squat rotation, quadruped, breathing
+    { number: 2, name: "Committing", exercises: [4, 5, 12, 15, 8, 9, 11]   },
+    // ~12 min — hardest; eye reset → warmup → 4-min walk → squat rotation → squats → planks → recovery
+    { number: 3, name: "Pushing",    exercises: [5, 4, 7, 12, 13, 14, 8, 9, 11] },
 ];
