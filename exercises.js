@@ -12,7 +12,7 @@ const EXERCISES = [
         number: 2,
         name: "Roll Back",
         subtitle: "Shoulder Rolls",
-        duration: 60,
+        duration: 30,
         section: "⚙️  CORE SYSTEMS",
         emoji: "🔄",
         description: "Roll shoulders forward 8 times, then backward 8 times. git revert for your upper body. 2 sets. Release the tension from those unreviewed PRs."
@@ -21,7 +21,7 @@ const EXERCISES = [
         number: 3,
         name: "Prevent Carpal Tunnel PR",
         subtitle: "Wrist Stretches",
-        duration: 60,
+        duration: 30,
         section: "⚙️  CORE SYSTEMS",
         emoji: "🖐️",
         description: "Extend arm forward, gently pull fingers back. Hold 20 sec per wrist. Then rotate wrists in circles. This is the most important PR you will merge today. No skipping."
@@ -39,7 +39,7 @@ const EXERCISES = [
         number: 5,
         name: "Clear Cache",
         subtitle: "Eye Break: 10-10-10",
-        duration: 60,
+        duration: 30,
         section: "👁️  VISUAL REFRESH",
         emoji: "👁️",
         description: "Close eyes for 10 seconds. Open, focus on something 20 feet away for 10 seconds. Repeat 3 times. Flush the pixel buffer. Reduce eye strain before it becomes a bug."
@@ -48,7 +48,7 @@ const EXERCISES = [
         number: 6,
         name: "Refactor Your Spine",
         subtitle: "Seated Back Twist",
-        duration: 60,
+        duration: 30,
         section: "🦴  BACKEND MAINTENANCE",
         emoji: "🌀",
         description: "Seated tall, twist your torso gently left. Hold 5 sec. Then right. Hold 5 sec. 6 reps per side. Your spine's architecture needs refactoring after hours of hunching."
@@ -75,7 +75,7 @@ const EXERCISES = [
         number: 9,
         name: "Extend Your Reach",
         subtitle: "Overhead Arm Stretch",
-        duration: 40,
+        duration: 30,
         section: "🧘  SHUTDOWN SEQUENCE",
         emoji: "🙌",
         description: "Reach both arms overhead, interlace fingers, stretch tall. Lean gently side to side. 20 sec each direction. Extending your physical API endpoints after a long session."
@@ -142,5 +142,5 @@ const SETS = [
     // ~7 min  — moderate; sit-to-stand, deep squat rotation, quadruped, breathing
     { number: 2, name: "Committing", exercises: [4, 5, 12, 15, 8, 9, 11]   },
     // ~12 min — hardest; eye reset → warmup → 4-min walk → squat rotation → squats → planks → recovery
-    { number: 3, name: "Pushing",    exercises: [5, 4, 7, 12, 13, 14, 8, 9, 11] },
+    { number: 3, name: "Pushing",    exercises: [5, 4, 12, 13, 14, 8, 9, 7, 11] },
 ];

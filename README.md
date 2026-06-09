@@ -4,17 +4,17 @@
   <img src="screenshots/screenshot.jpg" alt="DevStretch app screenshot" width="700">
 </p>
 
-A PWA for developers who forget they have a body. 11 dev-themed stretches grouped into curated Sets (~5 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
+A PWA for developers who forget they have a body. 15 dev-themed exercises organized into 3 progressive Sets (6–11 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
 
 ---
 
 ## Features
 
 - **Stretch reminder countdown** — set a 20/45/60 min timer; alarm + voice fires when time is up, then auto-starts the next set. Start, pause, and reset independently
-- **Sets** — curated groups of exercises (~5 min each): *Core Systems*, *Recharge*, *Shutdown Sequence*. Cycle with `◀ ▶` or start on demand
-- **11 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Deploy to Standing Position`, and more
-- **Voice guidance** — announces each exercise, halfway points, and countdowns (toggleable)
-- **Sound effects** — beeps, countdowns, completion sounds (toggleable)
+- **3 progressive Sets** — *Building* (light warm-up), *Committing* (moderate), *Pushing* (demanding). Cycle with `◀ ▶` or start on demand
+- **15 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Full Stack Reach`, and more
+- **Voice guidance** — announces each exercise, halfway points, and transitions (toggleable)
+- **Sound effects** — beeps, completion sounds (toggleable)
 - **CLI progress bar** — `[████████░░░░░░░░] 50%`
 - **Boot sequence** — because every good dev tool needs a startup screen
 - **PWA** — installable on desktop and mobile, works fully offline
@@ -37,6 +37,44 @@ A PWA for developers who forget they have a body. 11 dev-themed stretches groupe
 | 9 | Extend Your Reach | Overhead Arm Stretch |
 | 10 | Lint Your Posture | Posture Check |
 | 11 | git commit --water | Hydration Reminder |
+| 12 | Full Stack Reach | Deep Squat Rotation |
+| 13 | Building the Core | Squats |
+| 14 | Building the Core | Planks |
+| 15 | Crawl Protocol | Quadruped Hold |
+
+---
+
+## Sets
+
+Each set covers all sections, with 💧 always as the last exercise.
+
+### Exercise reference
+
+| # | Exercise | Section | Duration | Intensity |
+|---|----------|---------|----------|-----------|
+| 1 | Neck Stretch | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
+| 2 | Shoulder Rolls | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
+| 3 | Wrist Stretches | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
+| 4 | Sit to Stand | ⚙️ CORE SYSTEMS | 40s | 🟡 moderate |
+| 12 | Deep Squat Rotation | ⚙️ CORE SYSTEMS | 50s | 🟡 moderate |
+| 13 | Squats | ⚙️ CORE SYSTEMS | 40s | 🔴 demanding |
+| 14 | Planks | ⚙️ CORE SYSTEMS | 40s | 🔴 demanding |
+| 5 | Eye Break | 👁️ VISUAL REFRESH | 30s | 🟢 light |
+| 6 | Seated Back Twist | 🦴 BACKEND MAINTENANCE | 30s | 🟢 light |
+| 15 | Quadruped Hold | 🦴 BACKEND MAINTENANCE | 45s | 🟡 moderate |
+| 7 | Walk Away | 🦴 BACKEND MAINTENANCE | 240s | 🟡 moderate |
+| 8 | Box Breathing | 🧠 PROCESS MANAGEMENT | 120s | 🟢 light |
+| 9 | Overhead Arm Stretch | 🧘 SHUTDOWN SEQUENCE | 30s | 🟢 light |
+| 10 | Posture Check | 🧘 SHUTDOWN SEQUENCE | 20s | 🟢 light |
+| 11 | git commit --water | 🧘 SHUTDOWN SEQUENCE | 40s | 💧 always last |
+
+### Set composition
+
+| Set | Exercises | ~Duration | Notes |
+|-----|-----------|-----------|-------|
+| 1 — **Building** | 1 → 2 → 3 → 5 → 6 → 8 → 10 → 💧 | ~6 min | Lightest; gentle upper-body warm-up only |
+| 2 — **Committing** | 4 → 5 → 12 → 15 → 8 → 9 → 💧 | ~6 min | Moderate; lower body + core stability |
+| 3 — **Pushing** | 5 → 4 → 12 → 13 → 14 → 8 → 9 → 7 → 💧 | ~11 min | Hardest; squats + planks + 4-min walk. Sweat mandatory |
 
 ---
 
@@ -69,7 +107,7 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 
 ### Testing Sets
 
-1. Use `◀` / `▶` to cycle between *Core Systems*, *Recharge*, and *Shutdown Sequence*
+1. Use `◀` / `▶` to cycle between *Building*, *Committing*, and *Pushing*
 2. Click `▶ START SET` to play the current set on demand
 3. To test auto-start on reminder fire, run `window.workoutTimer.reminder.start(0.05)` in the console — the next set starts automatically when it fires
 
@@ -88,7 +126,7 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ## Roadmap
 
 - [x] Stretch reminder countdown with start/pause/reset
-- [x] Create the concept of a "Set" — curated groups of exercises (~5 min each), auto-started by the reminder
+- [x] Create the concept of a "Set" — curated groups of exercises, auto-started by the reminder
 - [ ] More exercises and sets — eyes, hands, full body...
 
 ---
