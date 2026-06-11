@@ -8,7 +8,7 @@ class NotificationManager {
 
     async requestPermission() {
         if (!('Notification' in window)) {
-            console.warn('DevStretch: Notifications not supported.');
+            console.warn('DevStretch Plus: Notifications not supported.');
             return false;
         }
         if (this.permission === 'granted') return true;
@@ -61,9 +61,9 @@ class NotificationManager {
     async sendStandUpNotification() {
         const messages = [
             { title: "Stand up, dev! 🚀", body: `You've been coding for ${this.intervalMinutes} minutes. Time to Deploy to Standing Position.` },
-            { title: "git push --yourself 💪", body: "Time for a DevStretch break. Your body filed a bug report." },
+            { title: "git push --yourself 💪", body: "Time for a DevStretch Plus break. Your body filed a bug report." },
             { title: "⚠️ MEMORY LEAK DETECTED", body: "You've been sitting too long. Run garbage collection now." },
-            { title: "Linter Warning: Posture 🦴", body: `${this.intervalMinutes}min break reminder. Open DevStretch and fix those warnings.` },
+            { title: "Linter Warning: Posture 🦴", body: `${this.intervalMinutes}min break reminder. Open DevStretch Plus and fix those warnings.` },
             { title: "Scheduled maintenance 🔧", body: "Time to take your system offline for a quick stretch. // It's a feature, not a bug" },
         ];
 
@@ -79,7 +79,7 @@ class NotificationManager {
                     renotify: true
                 });
             } catch (e) {
-                console.warn('DevStretch notification error:', e);
+                console.warn('DevStretch Plus notification error:', e);
             }
         }
     }
@@ -95,7 +95,7 @@ class NotificationManager {
                     tag: 'devstretch-custom'
                 });
             } catch (e) {
-                console.warn('DevStretch notification error:', e);
+                console.warn('DevStretch Plus notification error:', e);
             }
         }
     }
@@ -106,6 +106,7 @@ class ReminderTimer {
         this.totalSeconds = 0;
         this.currentSeconds = 0;
         this.state = 'idle'; // 'idle' | 'running' | 'paused' | 'fired'
+        this._deadline = 0;  // wall-clock ms when the countdown fires — survives background-tab interval throttling
         this._interval = null;
         this.onTick = null;     // (seconds, state) => void — called each second and on state changes
         this.onComplete = null; // () => void — called when countdown hits 0
@@ -115,6 +116,7 @@ class ReminderTimer {
         if (this.state === 'running') return;
         this.totalSeconds = minutes * 60;
         this.currentSeconds = this.totalSeconds;
+        this._deadline = Date.now() + this.totalSeconds * 1000;
         this.state = 'running';
         this._clearInterval();
         this._interval = setInterval(() => this._tick(), 1000);
@@ -123,9 +125,15 @@ class ReminderTimer {
 
     resume() {
         if (this.state !== 'paused') return;
+        this._deadline = Date.now() + this.currentSeconds * 1000;
         this.state = 'running';
         this._interval = setInterval(() => this._tick(), 1000);
         if (this.onTick) this.onTick(this.currentSeconds, this.state);
+    }
+
+    // Recompute remaining time from the wall clock — call when the tab becomes visible again
+    sync() {
+        if (this.state === 'running') this._tick();
     }
 
     pause() {
@@ -143,7 +151,7 @@ class ReminderTimer {
     }
 
     _tick() {
-        this.currentSeconds--;
+        this.currentSeconds = Math.max(0, Math.round((this._deadline - Date.now()) / 1000));
         if (this.currentSeconds <= 0) {
             this.currentSeconds = 0;
             this.state = 'fired';

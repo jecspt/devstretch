@@ -3,7 +3,7 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
             .then(reg => {
-                console.log('DevStretch: SW registered on scope:', reg.scope);
+                console.log('DevStretch Plus: SW registered on scope:', reg.scope);
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     installingWorker.onstatechange = () => {
@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
                     };
                 };
             })
-            .catch(err => console.warn('DevStretch: SW failed:', err));
+            .catch(err => console.warn('DevStretch Plus: SW failed:', err));
     });
 }
 
@@ -42,7 +42,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 window.addEventListener('appinstalled', () => {
-    console.log('DevStretch: Installation confirmed.');
+    console.log('DevStretch Plus: Installation confirmed.');
     deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
     if (installBtn) installBtn.style.display = 'none';

@@ -1,6 +1,6 @@
 {
-    "name": "DevStretch - Antiburnout Protocol",
-    "short_name": "DevStretch",
+    "name": "DevStretch Plus - Antiburnout Protocol",
+    "short_name": "DevStretch+",
     "description": "11 dev-themed exercises with automatic timers, voice guidance, and stand-up reminders. Your body filed a bug report.",
     "start_url": "/",
     "display": "standalone",
@@ -18,7 +18,7 @@
         {
             "name": "Start Workout",
             "short_name": "Stretch",
-            "description": "Start the DevStretch protocol",
+            "description": "Start the DevStretch Plus protocol",
             "url": "/?action=start",
             "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
         }

@@ -1,5 +1,6 @@
-# ▸ DevStretch — Antiburnout Protocol
+# ▸ DevStretch Plus — Antiburnout Protocol
 
+**[🚀 Live App](https://devstretchplus.vercel.app)**
 
 A PWA for developers who forget they have a body. 15 dev-themed exercises organized into 3 progressive Sets (6–11 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
 
@@ -64,6 +65,18 @@ python -m http.server 8080
 ```
 
 Then open `http://localhost:8080`. Hard-refresh (`Ctrl+Shift+R`) after changes to bypass the service worker cache.
+
+### Versioning
+
+The app version lives in a single place: `APP_VERSION` in `version.js`. The UI (boot screen, header, footer) and the service worker cache name (`devstretch-plus-v<version>`) all derive from it, so a bump automatically invalidates the offline cache for returning users.
+
+The patch version is auto-bumped by a git `pre-commit` hook on every commit to `master`. Enable it once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+To bump minor/major instead, edit `version.js` in the same commit — the hook skips auto-bumping when `version.js` is already staged.
 
 ### Testing the stretch reminder
 

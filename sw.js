@@ -1,8 +1,10 @@
-const CACHE_NAME = 'devstretch-v1.1';
+importScripts('version.js');
+const CACHE_NAME = `devstretch-plus-v${APP_VERSION}`;
 const ASSETS = [
     '/',
     '/index.html',
     '/style.css',
+    '/version.js',
     '/exercises.js',
     '/notifications.js',
     '/script.js',

@@ -36,6 +36,17 @@ class WorkoutTimer {
         this.lastTenAnnounced = false;
         this.nextExAnnounced = false;
         this._nagTimer = null;
+        this._lastTickTs = 0;       // wall-clock anchor so the timer survives background-tab throttling
+        this._suppressCues = false; // mute sound/voice while fast-forwarding missed seconds
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'visible') return;
+            if (this.isRunning) {
+                this.tick(); // catch up immediately instead of waiting for the next interval
+            } else if (this.reminder.state === 'running') {
+                this.reminder.sync();
+            }
+        });
 
         this.rebootBtn = document.getElementById('rebootBtn');
         if (this.rebootBtn) {
@@ -184,6 +195,7 @@ class WorkoutTimer {
 
         this.updateDisplay();
         if (this.timer) clearInterval(this.timer);
+        this._lastTickTs = Date.now();
         this.timer = setInterval(() => this.tick(), 1000);
         this.playSound('start');
     }
@@ -248,6 +260,7 @@ class WorkoutTimer {
             this.isRunning = true;
             this.startBtn.style.display = 'none';
             this.pauseBtn.style.display = 'flex';
+            this._lastTickTs = Date.now();
             this.timer = setInterval(() => this.tick(), 1000);
         }
         const ex = this.exercises[index];
@@ -256,6 +269,19 @@ class WorkoutTimer {
     }
 
     tick() {
+        // Browsers throttle background-tab intervals to ~1/min (or suspend them entirely),
+        // so count elapsed wall-clock seconds instead of trusting one call per second.
+        const steps = Math.floor((Date.now() - this._lastTickTs) / 1000);
+        if (steps < 1) return;
+        this._lastTickTs += steps * 1000;
+        for (let i = steps; i > 0 && this.isRunning; i--) {
+            this._suppressCues = i > 1; // only the final (current) second gets sound/voice
+            this._step();
+        }
+        this._suppressCues = false;
+    }
+
+    _step() {
         this.currentTime--;
         this.totalElapsedTime++;
 
@@ -399,6 +425,7 @@ class WorkoutTimer {
     }
 
     completeSet() {
+        this._suppressCues = false; // completion cues always play, even during catch-up
         clearInterval(this.timer);
         this.isRunning = false;
         this.timerDisplay.classList.remove('rest-phase', 'active-phase');
@@ -410,7 +437,7 @@ class WorkoutTimer {
 
         this.playSound('complete');
         this.notifications.sendCustomNotification(
-            'DevStretch Set Complete! 🎉',
+            'DevStretch Plus Set Complete! 🎉',
             `${setName} finished in ${mins}:${secs}. git push --body.`
         );
 
@@ -454,12 +481,12 @@ class WorkoutTimer {
     }
 
     playSound(type) {
-        if (!this.soundEnabled) return;
+        if (!this.soundEnabled || this._suppressCues) return;
         try { this.sounds[type]?.play(); } catch (e) {}
     }
 
     speak(text) {
-        if (!this.voiceEnabled) return;
+        if (!this.voiceEnabled || this._suppressCues) return;
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US';
@@ -610,5 +637,8 @@ class WorkoutTimer {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-app-version]').forEach(el => {
+        el.textContent = `v${APP_VERSION}`;
+    });
     window.workoutTimer = new WorkoutTimer();
 });

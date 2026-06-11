@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-DevStretch is a no-build, no-framework PWA — vanilla HTML/CSS/JS only. There are no npm packages, no bundler, no transpilation step, and no test suite. To "run" the app, serve it over HTTP (browsers block certain APIs like service workers and notifications on `file://`).
+DevStretch Plus (deployed at https://devstretchplus.vercel.app) is a no-build, no-framework PWA — vanilla HTML/CSS/JS only. There are no npm packages, no bundler, no transpilation step, and no test suite. To "run" the app, serve it over HTTP (browsers block certain APIs like service workers and notifications on `file://`).
 
 ```bash
 # Any static file server works. Examples:
@@ -19,6 +19,8 @@ When making changes, hard-refresh the browser (`Ctrl+Shift+R`) to bypass the ser
 
 Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are parsed):
 
+0. **`version.js`** — declares one global: `APP_VERSION`, the single source of truth for the app version. The DOMContentLoaded handler in `script.js` fills every `[data-app-version]` element in `index.html` with it, and `sw.js` derives `CACHE_NAME` from it via `importScripts('version.js')` (so the file must stay worker-safe — no `document`/`window`). The patch version is auto-bumped by `.githooks/pre-commit` on every commit to `master` (enable once per clone with `git config core.hooksPath .githooks`); the hook skips when `version.js` is already staged, which is how minor/major bumps are done manually.
+
 1. **`exercises.js`** — declares two globals: `EXERCISES` (15 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 progressive groups — *Building* ~6 min, *Committing* ~6 min, *Pushing* ~11 min). Both are the single source of truth for workout content and structure.
 
 2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
@@ -27,7 +29,7 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 4. **`pwa.js`** — registers `sw.js` as a service worker and handles the `beforeinstallprompt` event to show/hide the `#installBtn`.
 
-**`sw.js`** runs in its own worker scope. It caches all static assets at install time (`CACHE_NAME = 'devstretch-v1.1'`) and serves them cache-first. **When adding new assets (sounds, icons, etc.), add them to the `ASSETS` array in `sw.js` and bump `CACHE_NAME`** — otherwise the old cache will be served to returning users.
+**`sw.js`** runs in its own worker scope. It caches all static assets at install time (`CACHE_NAME` = `devstretch-plus-v${APP_VERSION}`) and serves them cache-first. **When adding new assets (sounds, icons, etc.), add them to the `ASSETS` array in `sw.js`** — the cache name follows `APP_VERSION`, so the pre-commit version bump busts the old cache automatically.
 
 ## Key Patterns
 
@@ -37,7 +39,9 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 **Sets** (`exercises.js` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, `start()` is called immediately.
 
-**Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. The `tick()` method decrements `currentTime` each second and handles the transitions: active exercise → rest period → next exercise → set complete.
+**Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. `_step()` decrements `currentTime` by one second and handles the transitions: active exercise → rest period → next exercise → set complete.
+
+**Background-tab resilience**: browsers throttle background-tab `setInterval` to ~1/min (or suspend it), so neither timer trusts one callback per second. `WorkoutTimer.tick()` counts elapsed wall-clock seconds since `_lastTickTs` and runs `_step()` that many times, muting sound/voice via `_suppressCues` for all but the final second (set completion cues always play). `ReminderTimer` stores a `_deadline` timestamp and recomputes `currentSeconds` from it on every `_tick()`. A `visibilitychange` listener in the `WorkoutTimer` constructor forces an immediate catch-up (`tick()` / `reminder.sync()`) when the tab becomes visible. When changing timer logic, anything per-second belongs in `_step()`, not `tick()`.
 
 **Voice announcement flags** (`halfwayAnnounced`, `lastTenAnnounced`, `nextExAnnounced`) are reset via `resetFlags()` on every exercise/rest transition to prevent duplicate speech.
 
