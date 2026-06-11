@@ -39,7 +39,7 @@ const EXERCISES = [
         number: 5,
         name: "Clear Cache",
         subtitle: "Eye Break: 10-10-10",
-        duration: 30,
+        duration: 15,
         section: "👁️  VISUAL REFRESH",
         emoji: "👁️",
         description: "Close eyes for 10 seconds. Open, focus on something 20 feet away for 10 seconds. Repeat 3 times. Flush the pixel buffer. Reduce eye strain before it becomes a bug."
@@ -93,7 +93,7 @@ const EXERCISES = [
         number: 11,
         name: "git commit --water",
         subtitle: "Hydration Reminder",
-        duration: 40,
+        duration: 15,
         section: "🧘  SHUTDOWN SEQUENCE",
         emoji: "💧",
         description: "Drink water. Right now. Seriously. git commit -m 'stay hydrated' && git push. Your brain is 75% water and you have not been watering it. This commit is non-negotiable."
@@ -109,7 +109,7 @@ const EXERCISES = [
     },
     {
         number: 13,
-        name: "Building the Core",
+        name: "Building the Core - Squats",
         subtitle: "Squats",
         duration: 40,
         section: "⚙️  CORE SYSTEMS",
@@ -118,7 +118,7 @@ const EXERCISES = [
     },
     {
         number: 14,
-        name: "Building the Core",
+        name: "Building the Core - Planks",
         subtitle: "Planks",
         duration: 60,
         section: "⚙️  CORE SYSTEMS",
@@ -129,18 +129,36 @@ const EXERCISES = [
         number: 15,
         name: "Crawl Protocol",
         subtitle: "Quadruped Hold",
-        duration: 45,
+        duration: 30,
         section: "🦴  BACKEND MAINTENANCE",
         emoji: "🕷️",
         description: "Hands and knees on the floor — wrists under shoulders, knees under hips. Back flat like a table, no sagging. Hold 30 sec breathing steadily. For extra credit: extend opposite arm and leg and hold 5 sec each side. Your core infrastructure needs as much maintenance as your codebase."
+    },
+    {
+        number: 17,
+        name: "Boot Sequence",
+        subtitle: "Stand Up + Neck + Shoulders + Wrists",
+        duration: 80,
+        section: "🧘  SHUTDOWN SEQUENCE",
+        emoji: "🚀",
+        description: "0–20s: Stand up — no hands. 20–40s: Neck — turn left/right, hold 3s each side. 40–60s: Shoulders — roll forward 5×, back 5×. 60–80s: Wrists — extend arm, pull fingers back 10s per hand."
+    },
+    {
+        number: 16,
+        name: "Stretch Protocol",
+        subtitle: "Cat, Cat-Cow Stretch",
+        duration: 30,
+        section: "🦴  BACKEND MAINTENANCE",
+        emoji: "😸",
+        description: "Well, Cat stretch: on all fours, round your back up like a cat. Hold 5 sec. Then Cow stretch: drop belly down, lift chest and tailbone up. Hold 5 sec. Your backend systems need regular stretching to prevent stiffness and downtime."
     }
 ];
 
 const SETS = [
     // ~8 min  — lightest; gentle upper-body warm-up, no demanding Core Systems exercises
-    { number: 1, name: "Building",   exercises: [4, 1, 2, 3, 5, 6, 8, 10, 11] },
-    // ~7 min  — moderate; sit-to-stand, deep squat rotation, quadruped, breathing
-    { number: 2, name: "Committing", exercises: [4, 5, 12, 15, 8, 9, 11]   },
-    // ~11 min — hardest; eye reset → warmup → squat rotation → squats → planks → breathing → stretch → water → 4-min walk
-    { number: 3, name: "Pushing",    exercises: [4, 5, 12, 13, 14, 11, 7] },
+    { number: 1, name: "Building",   exercises: [5, 17, 6, 8, 10, 11] },
+    // ~7 min  — moderate; boot sequence, eye reset, deep squat rotation, quadruped, breathing
+    { number: 2, name: "Committing", exercises: [5, 17, 9, 12, 15, 16, 11] },
+    // ~11 min — hardest; boot sequence → eye reset → squat rotation → squats → planks → breathing → stretch → water → 4-min walk
+    { number: 3, name: "Pushing",    exercises: [17, 5, 12, 13, 14, 16, 11, 7] },
 ];
