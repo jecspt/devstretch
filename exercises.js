@@ -1,12 +1,12 @@
 const EXERCISES = [
     {
         number: 1,
-        name: "Boot Sequence",
+        name: "Boot Sequence - Stand up to stretch and move",
         subtitle: "Stand Up + Neck + Shoulders + Wrists",
         duration: 60,
         section: "🧘  BOOT SEQUENCE",
         emoji: "🚀",
-        description: "Stand up — no hands. Neck — turn left/right, hold 3s each side. Shoulders — roll forward. Wrists — extend arm, pull fingers back 10s per hand."
+        description: "1. Stand up 2. Neck — turn left/right 3. Shoulders — roll forward and backwards 4. Wrists — rotate, extend arm, pull fingers back."
     },
     {
         number: 2,
@@ -119,10 +119,10 @@ const EXERCISES = [
 ];
 
 const SETS = [
-    // ~8 min  — lightest; gentle upper-body warm-up, no demanding Core Systems exercises
-    { number: 1, name: "Building",   exercises: [2, 3, 9, 10, 11, 8] },
-    // ~7 min  — moderate; boot sequence, eye reset, deep squat rotation, quadruped, breathing
+    // ~5 min — 6 exercises
+    { number: 1, name: "Building", exercises: [2, 3, 9, 10, 11, 8] },
+    // ~5 min — 7 exercises
     { number: 2, name: "Committing", exercises: [2, 1, 9, 12, 15, 16, 11] },
-    // ~11 min — hardest; boot sequence → eye reset → squat rotation → squats → planks → breathing → stretch → water → 4-min walk
-    { number: 3, name: "Pushing",    exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
+    // ~10 min — 8 exercises
+    { number: 3, name: "Pushing", exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
 ];

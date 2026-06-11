@@ -355,12 +355,21 @@ async function sequenceEditor(set) {
                 : [C.dim + '(empty — press a to add an exercise)' + C.reset]),
         ];
         paint(`Set ${set.number} — ${set.name}: exercise sequence`, body,
-            '↑/↓ move · a add · d remove · [ move up · ] move down · Esc done');
+            '↑/↓ move · Enter replace · a add after · d remove · [ move up · ] move down · Esc done');
         const { key, str } = await readKey();
         if (key.name === 'escape' || key.name === 'q') return;
         if (key.name === 'up') sel = items.length ? (sel - 1 + items.length) % items.length : 0;
         else if (key.name === 'down') sel = items.length ? (sel + 1) % items.length : 0;
-        else if (str === 'a') {
+        else if (key.name === 'return' && set.exercises.length) {
+            const sorted = [...state.data.exercises].sort((a, b) => a.number - b.number);
+            const current = sorted.findIndex(e => e.number === set.exercises[sel]);
+            const options = sorted.map(e => `#${pad(e.number, 4)}${pad(e.name, 32)}${e.duration}s  ${e.section}`);
+            const idx = await pick(`Replace position ${sel + 1}`, options, current);
+            if (idx !== -1 && sorted[idx].number !== set.exercises[sel]) {
+                set.exercises[sel] = sorted[idx].number;
+                state.dirty = true;
+            }
+        } else if (str === 'a') {
             const sorted = [...state.data.exercises].sort((a, b) => a.number - b.number);
             const options = sorted.map(e => `#${pad(e.number, 4)}${pad(e.name, 32)}${e.duration}s  ${e.section}`);
             const idx = await pick('Add exercise to sequence', options);
