@@ -643,5 +643,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-app-version]').forEach(el => {
         el.textContent = `v${APP_VERSION}`;
     });
+
+    const notifStatus = document.getElementById('bootNotifStatus');
+    if (notifStatus && 'Notification' in window) {
+        const p = Notification.permission;
+        if (p === 'granted') {
+            notifStatus.textContent = '✓ OK';
+            notifStatus.className = 'ok';
+        } else if (p === 'denied') {
+            notifStatus.textContent = '✗ denied';
+            notifStatus.className = 'warn';
+        }
+        // 'default' = not yet asked — keep the existing ⚠ permission req
+    }
+
     window.workoutTimer = new WorkoutTimer();
 });
