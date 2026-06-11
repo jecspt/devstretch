@@ -1,0 +1,12 @@
+{
+    "name": "devstretch-backoffice",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Terminal UI for managing DevStretch Plus exercises, sets, and sections",
+    "bin": {
+        "devstretch-backoffice": "cli.js"
+    },
+    "engines": {
+        "node": ">=16"
+    }
+}

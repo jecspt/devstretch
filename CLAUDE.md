@@ -53,6 +53,8 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 5` (seconds), hardcoded in the constructor — a single voice cue fires at exercise end ("Prepare for next exercise." / "Prepare for next iteration." on the last exercise) with no countdown during the break.
 
+A terminal backoffice exists for editing this data interactively: `npx ./tools/backoffice` (zero-dependency Node TUI in `tools/backoffice/cli.js`). It parses `exercises.js` in a `vm` sandbox, edits in memory, and regenerates the whole file on save (comments in `SETS` are regenerated, not preserved). It validates dangling set→exercise references before saving. `tools/` and `.githooks/` are excluded from the Vercel deploy via `.vercelignore`.
+
 To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
 
 ## Plans & Design Docs

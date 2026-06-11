@@ -1,51 +1,24 @@
 const EXERCISES = [
     {
         number: 1,
-        name: "Review That Code",
-        subtitle: "Neck Stretch",
-        duration: 30,
-        section: "⚙️  CORE SYSTEMS",
-        emoji: "🔍",
-        description: "Turn your head slowly left and right, like reviewing code across two monitors. Hold 3 sec each side. 5 reps. Your neck has been staring at one angle for too long."
+        name: "Boot Sequence",
+        subtitle: "Stand Up + Neck + Shoulders + Wrists",
+        duration: 60,
+        section: "🧘  BOOT SEQUENCE",
+        emoji: "🚀",
+        description: "Stand up — no hands. Neck — turn left/right, hold 3s each side. Shoulders — roll forward. Wrists — extend arm, pull fingers back 10s per hand."
     },
     {
         number: 2,
-        name: "Roll Back",
-        subtitle: "Shoulder Rolls",
-        duration: 30,
-        section: "⚙️  CORE SYSTEMS",
-        emoji: "🔄",
-        description: "Roll shoulders forward 8 times, then backward 8 times. git revert for your upper body. 2 sets. Release the tension from those unreviewed PRs."
-    },
-    {
-        number: 3,
-        name: "Prevent Carpal Tunnel PR",
-        subtitle: "Wrist Stretches",
-        duration: 30,
-        section: "⚙️  CORE SYSTEMS",
-        emoji: "🖐️",
-        description: "Extend arm forward, gently pull fingers back. Hold 20 sec per wrist. Then rotate wrists in circles. This is the most important PR you will merge today. No skipping."
-    },
-    {
-        number: 4,
-        name: "Deploy to Standing Position",
-        subtitle: "Sit to Stand",
-        duration: 30,
-        section: "⚙️  CORE SYSTEMS",
-        emoji: "🚀",
-        description: "Stand up from your chair slowly without using your hands. Your body needs to ship to production too. Zero downtime deployment."
-    },
-    {
-        number: 5,
         name: "Clear Cache",
         subtitle: "Eye Break: 10-10-10",
         duration: 15,
-        section: "👁️  VISUAL REFRESH",
+        section: "🧘  BOOT SEQUENCE",
         emoji: "👁️",
         description: "Close eyes for 10 seconds. Open, focus on something 20 feet away for 10 seconds. Repeat 3 times. Flush the pixel buffer. Reduce eye strain before it becomes a bug."
     },
     {
-        number: 6,
+        number: 3,
         name: "Refactor Your Spine",
         subtitle: "Seated Back Twist",
         duration: 30,
@@ -69,7 +42,7 @@ const EXERCISES = [
         duration: 120,
         section: "🧠  PROCESS MANAGEMENT",
         emoji: "💨",
-        description: "Inhale 4 sec → hold 4 sec → exhale 6 sec → hold 2 sec. 2 sets × 6 cycles. Clear the stack. Free the memory. Reduce cognitive load before the next sprint."
+        description: "Inhale 4 sec → hold 4 sec → exhale 7 sec. Clear the stack. Free the memory. Reduce cognitive load before the next sprint."
     },
     {
         number: 9,
@@ -135,15 +108,6 @@ const EXERCISES = [
         description: "Hands and knees on the floor — wrists under shoulders, knees under hips. Back flat like a table, no sagging. Hold 30 sec breathing steadily. For extra credit: extend opposite arm and leg and hold 5 sec each side. Your core infrastructure needs as much maintenance as your codebase."
     },
     {
-        number: 17,
-        name: "Boot Sequence",
-        subtitle: "Stand Up + Neck + Shoulders + Wrists",
-        duration: 80,
-        section: "🧘  SHUTDOWN SEQUENCE",
-        emoji: "🚀",
-        description: "0–20s: Stand up — no hands. 20–40s: Neck — turn left/right, hold 3s each side. 40–60s: Shoulders — roll forward 5×, back 5×. 60–80s: Wrists — extend arm, pull fingers back 10s per hand."
-    },
-    {
         number: 16,
         name: "Stretch Protocol",
         subtitle: "Cat, Cat-Cow Stretch",
@@ -156,9 +120,9 @@ const EXERCISES = [
 
 const SETS = [
     // ~8 min  — lightest; gentle upper-body warm-up, no demanding Core Systems exercises
-    { number: 1, name: "Building",   exercises: [5, 17, 6, 8, 10, 11] },
+    { number: 1, name: "Building",   exercises: [2, 3, 9, 10, 11, 8] },
     // ~7 min  — moderate; boot sequence, eye reset, deep squat rotation, quadruped, breathing
-    { number: 2, name: "Committing", exercises: [5, 17, 9, 12, 15, 16, 11] },
+    { number: 2, name: "Committing", exercises: [2, 1, 9, 12, 15, 16, 11] },
     // ~11 min — hardest; boot sequence → eye reset → squat rotation → squats → planks → breathing → stretch → water → 4-min walk
-    { number: 3, name: "Pushing",    exercises: [17, 5, 12, 13, 14, 16, 11, 7] },
+    { number: 3, name: "Pushing",    exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
 ];

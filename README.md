@@ -78,6 +78,23 @@ git config core.hooksPath .githooks
 
 To bump minor/major instead, edit `version.js` in the same commit — the hook skips auto-bumping when `version.js` is already staged.
 
+### Backoffice (content management TUI)
+
+A zero-dependency terminal UI for editing exercises, sets, and sections without touching `exercises.js` by hand:
+
+```bash
+npx ./tools/backoffice
+# or
+node tools/backoffice/cli.js
+```
+
+- **Exercises** — table view; edit any field inline, pick the section from a dropdown (or create a new one), add/delete exercises. Renumbering an exercise updates every set that references it.
+- **Sets** — edit name/number and the exercise sequence: add from a dropdown, remove, reorder with `[` / `]`.
+- **Sections** — list, add, and rename (renames cascade to all exercises).
+- Saving validates the data first: sets referencing non-existent exercise numbers are flagged (the app would silently skip them) with an option to strip them.
+
+Changes are written straight back to `exercises.js` — commit and push as usual to deploy.
+
 ### Testing the stretch reminder
 
 1. Select an interval (20/45/60 min) in the reminder row

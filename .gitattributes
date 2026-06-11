@@ -1,2 +1,4 @@
 # Git hooks run under sh — CRLF line endings break them on Windows
 .githooks/* text eol=lf
+# CLI tool may run via shebang on unix-like shells
+tools/** text eol=lf
