@@ -214,6 +214,9 @@ class WorkoutTimer {
     }
 
     reset() {
+        this._clearNagTimer();
+        this.reminder.reset();
+        this._updateReminderButtons();
         this.isRunning = false;
         this.isResting = false;
         this.currentExerciseIndex = 0;
