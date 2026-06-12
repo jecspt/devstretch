@@ -170,8 +170,7 @@ class WorkoutTimer {
     start() {
         if (this.isRunning) return;
         this._clearNagTimer();
-        this.reminder.reset();
-        this._updateReminderButtons();
+        // Reminder runs independently — do not reset it here.
 
         // Snapshot which set this session belongs to and resolve its exercises
         this.activeSetIndex = this.currentSetIndex;
@@ -214,6 +213,7 @@ class WorkoutTimer {
         this.speak('Paused.');
         this.setStatus('PAUSED - click RESUME to continue');
         this.updateNavButtons();
+        this._updateSetNavButtons();
     }
 
     reset() {
@@ -556,23 +556,21 @@ class WorkoutTimer {
     }
 
     _onReminderComplete() {
-        // Never advance currentSetIndex here — set changes only via manual nav or set completion.
-        // The reminder just notifies; the user picks when to start.
-        if (this.isRunning) {
-            this.playSound('complete');
-            this.speak('Time to stretch! Finish this exercise, then take a break.');
-            this.setStatus('⏰ Stretch time! Finish this exercise, then rest.');
-        } else {
-            this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready when you are.`);
-            this.setStatus('⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)');
-            this._startNagTimer();
-        }
-
         this.notifications.sendCustomNotification(
             'Time to Stretch! 🧘',
             `Up next: ${SETS[this.currentSetIndex].name}. Stand up and stretch!`
         );
         this._updateReminderButtons();
+
+        if (this.isRunning) {
+            // Set is in progress — just notify; let it finish naturally
+            this.playSound('complete');
+            this.speak('Time to stretch! Finish this exercise, then rest.');
+            this.setStatus('⏰ Stretch time! Finishing current exercise first...');
+        } else {
+            // Auto-start the queued set when the reminder fires
+            this.start();
+        }
     }
 
     _startNagTimer() {
@@ -645,8 +643,8 @@ class WorkoutTimer {
         const locked = this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0;
         if (this.setPrevBtn) this.setPrevBtn.disabled = locked;
         if (this.setNextBtn) this.setNextBtn.disabled = locked;
-        const inProgress = this.currentExerciseIndex > 0 || this.currentTime > 0;
-        if (this.skipSetBtn) this.skipSetBtn.disabled = !inProgress;
+        // SKIP SET: only available while the set is actively running
+        if (this.skipSetBtn) this.skipSetBtn.disabled = !this.isRunning;
     }
 }
 
