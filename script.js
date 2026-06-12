@@ -62,6 +62,7 @@ class WorkoutTimer {
         };
 
         this.initElements();
+        this.updateSetDisplay(); // set label reads SETS.length, must run after initElements
         this.bindEvents();
         this.updateDisplay();
         this.updateNavButtons();
@@ -96,10 +97,11 @@ class WorkoutTimer {
         this.controls = document.querySelector('.controls');
         this.exerciseInfo = document.getElementById('exerciseInfo');
         this.statusLine = document.getElementById('statusLine');
-        this.setPrevBtn = document.getElementById('setPrevBtn');
-        this.setNextBtn = document.getElementById('setNextBtn');
-        this.setLabel   = document.getElementById('setLabel');
-        this.setName    = document.getElementById('setName');
+        this.setPrevBtn  = document.getElementById('setPrevBtn');
+        this.setNextBtn  = document.getElementById('setNextBtn');
+        this.skipSetBtn  = document.getElementById('skipSetBtn');
+        this.setLabel    = document.getElementById('setLabel');
+        this.setName     = document.getElementById('setName');
 
         const totalWorkoutTime = this.exercises.reduce((acc, ex) => acc + ex.duration, 0) + (this.exercises.length - 1) * this.restTime;
         this.statTotal.textContent = this.exercises.length;
@@ -119,6 +121,7 @@ class WorkoutTimer {
         this.remResetBtn.addEventListener('click', () => this._reminderReset());
         this.setPrevBtn.addEventListener('click', () => this._prevSet());
         this.setNextBtn.addEventListener('click', () => this._nextSet());
+        this.skipSetBtn.addEventListener('click', () => this.skipSet());
     }
 
     runBootSequence() {
@@ -553,20 +556,15 @@ class WorkoutTimer {
     }
 
     _onReminderComplete() {
-        this.currentSetIndex = (this.currentSetIndex + 1) % SETS.length;
-        this.updateSetDisplay();
-
+        // Never advance currentSetIndex here — set changes only via manual nav or set completion.
+        // The reminder just notifies; the user picks when to start.
         if (this.isRunning) {
-            // Silent advance — tick() catches divergence at next exercise boundary
             this.playSound('complete');
-            this.speak(`Time to stretch! Advancing to ${SETS[this.currentSetIndex].name} after this exercise.`);
-            this.setStatus(`> Set advancing to Set ${SETS[this.currentSetIndex].number} — finishing current exercise`);
+            this.speak('Time to stretch! Finish this exercise, then take a break.');
+            this.setStatus('⏰ Stretch time! Finish this exercise, then rest.');
         } else {
-            // Notify but don't auto-start — user must click START SET or dismiss
-            this._resolveSetExercises();
-            this.updateDisplay();
-            this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready. Start when you can.`);
-            this.setStatus(`⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)`);
+            this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready when you are.`);
+            this.setStatus('⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)');
             this._startNagTimer();
         }
 
@@ -617,6 +615,16 @@ class WorkoutTimer {
         }
     }
 
+    skipSet() {
+        const inProgress = this.currentExerciseIndex > 0 || this.currentTime > 0;
+        if (!inProgress) return;
+        clearInterval(this.timer);
+        this.isRunning = false;
+        this._suppressCues = false;
+        this.speak('Skipping to set complete.');
+        this.completeSet();
+    }
+
     _prevSet() {
         if (this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0) return;
         this.currentSetIndex = (this.currentSetIndex - 1 + SETS.length) % SETS.length;
@@ -637,6 +645,8 @@ class WorkoutTimer {
         const locked = this.isRunning || this.currentExerciseIndex > 0 || this.currentTime > 0;
         if (this.setPrevBtn) this.setPrevBtn.disabled = locked;
         if (this.setNextBtn) this.setNextBtn.disabled = locked;
+        const inProgress = this.currentExerciseIndex > 0 || this.currentTime > 0;
+        if (this.skipSetBtn) this.skipSetBtn.disabled = !inProgress;
     }
 }
 

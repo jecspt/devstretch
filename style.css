@@ -512,6 +512,17 @@ body {
     cursor: not-allowed;
 }
 
+.skip-set-btn {
+    color: var(--amber);
+    border-color: #3a2a00;
+}
+
+.skip-set-btn:hover:not(:disabled) {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: #1a1000;
+}
+
 #completionScreen {
     display: none;
     padding: 20px;
