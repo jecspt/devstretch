@@ -6,6 +6,7 @@
 CLAUDE.md
 README.md
 tools
+!tools/backoffice/cli.js
 docs
 node_modules
 *.md
