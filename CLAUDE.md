@@ -21,7 +21,7 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 0. **`version.js`** — declares one global: `APP_VERSION`, the single source of truth for the app version. The DOMContentLoaded handler in `script.js` fills every `[data-app-version]` element in `index.html` with it, and `sw.js` derives `CACHE_NAME` from it via `importScripts('version.js')` (so the file must stay worker-safe — no `document`/`window`). The patch version is auto-bumped by `.githooks/pre-commit` on every commit to `master` (enable once per clone with `git config core.hooksPath .githooks`); the hook skips when `version.js` is already staged, which is how minor/major bumps are done manually.
 
-1. **`exercises.js`** — declares two globals: `EXERCISES` (15 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 progressive groups — *Building* ~6 min, *Committing* ~6 min, *Pushing* ~11 min). Both are the single source of truth for workout content and structure.
+1. **`exercises.js`** — declares two globals: `EXERCISES` (13 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 progressive groups — *Building* ~5 min, *Committing* ~5 min, *Pushing* ~10 min). Both are the single source of truth for workout content and structure. Exercise numbers are non-contiguous (gaps exist from past renumbering) — the runtime handles this via `.find()`, not array indexing.
 
 2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
 
@@ -37,7 +37,9 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh (`Ctrl+Shift+R`), then try the `▶ START` / `⏸ PAUSE` / `↺ RESET` buttons in the reminder row. To test the fired state quickly, open the browser console and run `window.workoutTimer.reminder.start(0.05)` (~3 seconds).
 
-**Sets** (`exercises.js` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, `start()` is called immediately.
+**Nag timer**: after the reminder fires while the workout is idle, `_startNagTimer()` schedules a `setTimeout` every 3 minutes to re-notify the user. `_clearNagTimer()` cancels it. The nag is cleared by `start()`, `reset()`, `_reminderReset()`, and `_reminderStart()` — any action that represents "I acknowledged this" must call `_clearNagTimer()`.
+
+**Sets** (`exercises.js` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, the user must click START SET manually.
 
 **Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. `_step()` decrements `currentTime` by one second and handles the transitions: active exercise → rest period → next exercise → set complete.
 
@@ -47,15 +49,36 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 **Progress bar** is a pure ASCII string built by `buildProgressBar(pct, width=24)` — fill with `█`, empty with `░`.
 
-**Boot sequence** in `index.html` (`#bootSequence`) fades out and reveals `#mainContent` via timed `classList.add('visible')` on each `.boot-line` element. This is cosmetic only; the `WorkoutTimer` constructor runs regardless.
+**Boot sequence** in `index.html` (`#bootSequence`) fades out and reveals `#mainContent` via timed `classList.add('visible')` on each `.boot-line` element. The notification permission status line is updated dynamically by `script.js` on DOMContentLoaded (`granted` → `✓ OK`, `denied` → `✗ denied`, `default` → keeps `⚠ permission req`). This is cosmetic only; the `WorkoutTimer` constructor runs regardless.
 
 ## Adding or Modifying Exercises
 
 Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 5` (seconds), hardcoded in the constructor — a single voice cue fires at exercise end ("Prepare for next exercise." / "Prepare for next iteration." on the last exercise) with no countdown during the break.
 
-A terminal backoffice exists for editing this data interactively: `npx ./tools/backoffice` (zero-dependency Node TUI in `tools/backoffice/cli.js`). It parses `exercises.js` in a `vm` sandbox, edits in memory, and regenerates the whole file on save (comments in `SETS` are regenerated, not preserved). It validates dangling set→exercise references before saving. `tools/` and `.githooks/` are excluded from the Vercel deploy via `.vercelignore`.
+**Preferred way**: use the backoffice TUI — `npx ./tools/backoffice` (zero-dependency Node TUI in `tools/backoffice/cli.js`). It parses `exercises.js` in a `vm` sandbox, edits in memory, and regenerates the whole file on save. It validates dangling set→exercise references before saving. Can also be run inside the Docker container (see Docker section below).
+
+**Exercise numbers are non-contiguous** — gaps are intentional from past refactors. Do not assume `EXERCISES[n]` is exercise number `n`; always use `.find(e => e.number === n)`.
 
 To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
+
+## Docker
+
+The app is self-hostable via Docker. The image is `nginx:alpine` with the Node binary injected from `node:alpine` (latest) for the backoffice TUI.
+
+```bash
+# Start (port 7300)
+docker compose up -d --build
+
+# Update content after editing exercises.js
+docker compose up -d --build
+
+# Run the backoffice TUI against the live container
+docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js
+```
+
+The `-w /usr/share/nginx/html` flag sets the working directory so the backoffice finds `exercises.js` there. Edits are served immediately by nginx — no rebuild needed. Commit the updated `exercises.js` afterwards to keep git in sync.
+
+`tools/` is excluded from the Vercel deploy via `.vercelignore`. Only `tools/backoffice/cli.js` is copied into the Docker image (via `.dockerignore` negation rule).
 
 ## Plans & Design Docs
 
@@ -63,4 +86,4 @@ Feature designs and implementation plans live in `docs/plans/` with the naming c
 
 ## Notifications
 
-Notifications require HTTPS (or localhost) and user permission. The `NotificationManager` prefers the service worker path (`reg.showNotification`) for persistence; falls back to `new Notification()`. Stand-up reminders are plain `setInterval`s — they stop if the tab is closed.
+Notifications require HTTPS (or localhost) and user permission. The `NotificationManager` prefers the service worker path (`reg.showNotification`) for persistence; falls back to `new Notification()`. The nag timer (`_nagTimer` in `WorkoutTimer`) is a plain `setTimeout` chain — it stops when `_clearNagTimer()` is called or the tab is closed.

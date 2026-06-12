@@ -2,20 +2,21 @@
 
 **[🚀 Live App](https://devstretchplus.vercel.app)**
 
-A PWA for developers who forget they have a body. 15 dev-themed exercises organized into 3 progressive Sets (6–11 min each), with automatic timers, voice guidance, and a stretch reminder that auto-starts the next set when it fires.
+A PWA for developers who forget they have a body. 13 dev-themed exercises organized into 3 progressive Sets (5–10 min each), with automatic timers, voice guidance, and a stretch reminder that auto-advances the next set when it fires.
 
 ---
 
 ## Features
 
-- **Stretch reminder countdown** — set a 20/45/60 min timer; alarm + voice fires when time is up, then auto-starts the next set. Start, pause, and reset independently
+- **Stretch reminder countdown** — set a 25/50/60 min timer; alarm + voice fires when time is up, then queues the next set. Start, pause, and reset independently
 - **3 progressive Sets** — *Building* (light warm-up), *Committing* (moderate), *Pushing* (demanding). Cycle with `◀ ▶` or start on demand
-- **15 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Full Stack Reach`, and more
+- **13 dev-themed exercises** — `git commit --water`, `Lint Your Posture`, `Full Stack Reach`, and more
 - **Voice guidance** — announces each exercise, halfway points, and transitions (toggleable)
 - **Sound effects** — beeps, completion sounds (toggleable)
 - **CLI progress bar** — `[████████░░░░░░░░] 50%`
 - **Boot sequence** — because every good dev tool needs a startup screen
 - **PWA** — installable on desktop and mobile, works fully offline
+- **Docker** — self-hostable with a single `docker compose up -d --build`
 - **Dark terminal aesthetic** — green on black, JetBrains Mono
 
 ---
@@ -24,31 +25,29 @@ A PWA for developers who forget they have a body. 15 dev-themed exercises organi
 
 ### Exercises
 
-| # | Exercise | Section | Duration | Intensity |
-|---|----------|---------|----------|-----------|
-| 1 | Neck Stretch | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
-| 2 | Shoulder Rolls | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
-| 3 | Wrist Stretches | ⚙️ CORE SYSTEMS | 30s | 🟢 light |
-| 4 | Sit to Stand | ⚙️ CORE SYSTEMS | 30s | 🟡 moderate |
-| 12 | Deep Squat Rotation | ⚙️ CORE SYSTEMS | 50s | 🟡 moderate |
-| 13 | Squats | ⚙️ CORE SYSTEMS | 40s | 🔴 demanding |
-| 14 | Planks | ⚙️ CORE SYSTEMS | 60s | 🔴 demanding |
-| 5 | Eye Break | 👁️ VISUAL REFRESH | 30s | 🟢 light |
-| 6 | Seated Back Twist | 🦴 BACKEND MAINTENANCE | 30s | 🟢 light |
-| 15 | Quadruped Hold | 🦴 BACKEND MAINTENANCE | 45s | 🟡 moderate |
-| 7 | Walk Away | 🦴 BACKEND MAINTENANCE | 240s | 🟡 moderate |
-| 8 | Box Breathing | 🧠 PROCESS MANAGEMENT | 120s | 🟢 light |
-| 9 | Overhead Arm Stretch | 🧘 SHUTDOWN SEQUENCE | 30s | 🟢 light |
-| 10 | Posture Check | 🧘 SHUTDOWN SEQUENCE | 20s | 🟢 light |
-| 11 | git commit --water | 🧘 SHUTDOWN SEQUENCE | 10s | 💧 always last |
+| # | Exercise | Section | Duration |
+|---|----------|---------|----------|
+| 1 | Boot Sequence | 🧘 BOOT SEQUENCE | 60s |
+| 2 | Clear Cache | 🧘 BOOT SEQUENCE | 15s |
+| 3 | Refactor Your Spine | 🦴 BACKEND MAINTENANCE | 30s |
+| 7 | Offline Mode | 🦴 BACKEND MAINTENANCE | 240s |
+| 8 | Memory Garbage Collection | 🧠 PROCESS MANAGEMENT | 120s |
+| 9 | Extend Your Reach | 🧘 SHUTDOWN SEQUENCE | 30s |
+| 10 | Lint Your Posture | 🧘 SHUTDOWN SEQUENCE | 20s |
+| 11 | git commit --water | 🧘 SHUTDOWN SEQUENCE | 15s |
+| 12 | Full Stack Reach | ⚙️ CORE SYSTEMS | 50s |
+| 13 | Building the Core — Squats | ⚙️ CORE SYSTEMS | 40s |
+| 14 | Building the Core — Planks | ⚙️ CORE SYSTEMS | 60s |
+| 15 | Crawl Protocol | 🦴 BACKEND MAINTENANCE | 30s |
+| 16 | Stretch Protocol | 🦴 BACKEND MAINTENANCE | 30s |
 
 ### Set composition
 
-| Set | Exercises | ~Duration | Notes |
-|-----|-----------|-----------|-------|
-| 1 — **Building** | 1 → 2 → 3 → 5 → 6 → 8 → 10 → 💧 | ~6 min | Lightest; gentle upper-body warm-up only |
-| 2 — **Committing** | 4 → 5 → 12 → 15 → 8 → 9 → 💧 | ~6 min | Moderate; lower body + core stability |
-| 3 — **Pushing** | 5 → 4 → 12 → 13 → 14 → 8 → 9 → 💧 → 🚶‍➡️ | ~11 min | Hardest; squats + planks + 4-min walk. Sweat mandatory |
+| Set | Sequence | ~Duration |
+|-----|----------|-----------|
+| 1 — **Building** | Clear Cache → Refactor Your Spine → Extend Your Reach → Lint Your Posture → git commit --water → Box Breathing | ~5 min |
+| 2 — **Committing** | Clear Cache → Boot Sequence → Extend Your Reach → Full Stack Reach → Crawl Protocol → Stretch Protocol → git commit --water | ~5 min |
+| 3 — **Pushing** | Boot Sequence → Clear Cache → Full Stack Reach → Squats → Planks → Stretch Protocol → git commit --water → Offline Mode | ~10 min |
 
 ---
 
@@ -66,6 +65,23 @@ python -m http.server 8080
 
 Then open `http://localhost:8080`. Hard-refresh (`Ctrl+Shift+R`) after changes to bypass the service worker cache.
 
+### Self-hosting with Docker
+
+```bash
+git clone <repo>
+cd devstretch
+docker compose up -d --build
+# → http://localhost:7300
+```
+
+The container uses `nginx:alpine` and runs on port **7300**. `restart: always` means it survives reboots and crashes automatically.
+
+To update content after editing `exercises.js`:
+
+```bash
+docker compose up -d --build   # rebuilds the image with the new file
+```
+
 ### Versioning
 
 The app version lives in a single place: `APP_VERSION` in `version.js`. The UI (boot screen, header, footer) and the service worker cache name (`devstretch-plus-v<version>`) all derive from it, so a bump automatically invalidates the offline cache for returning users.
@@ -80,7 +96,9 @@ To bump minor/major instead, edit `version.js` in the same commit — the hook s
 
 ### Backoffice (content management TUI)
 
-A zero-dependency terminal UI for editing exercises, sets, and sections without touching `exercises.js` by hand:
+A zero-dependency terminal UI for editing exercises, sets, and sections without touching `exercises.js` by hand.
+
+**Locally:**
 
 ```bash
 npx ./tools/backoffice
@@ -88,16 +106,23 @@ npx ./tools/backoffice
 node tools/backoffice/cli.js
 ```
 
-- **Exercises** — table view; edit any field inline, pick the section from a dropdown (or create a new one), add/delete exercises. Renumbering an exercise updates every set that references it.
-- **Sets** — edit name/number and the exercise sequence: add from a dropdown, remove, reorder with `[` / `]`.
-- **Sections** — list, add, and rename (renames cascade to all exercises).
-- Saving validates the data first: sets referencing non-existent exercise numbers are flagged (the app would silently skip them) with an option to strip them.
+**Inside the running Docker container:**
 
-Changes are written straight back to `exercises.js` — commit and push as usual to deploy.
+```bash
+docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js
+```
+
+Edits made inside the container take effect immediately (nginx serves the file live). Commit the updated `exercises.js` afterwards to keep git and the image in sync.
+
+Features:
+- **Exercises** — table view; edit any field inline, pick the section from a dropdown (or create a new one), add/delete. Renumbering an exercise updates every set that references it.
+- **Sets** — edit name/number and the exercise sequence: replace in-place (`Enter`), add after (`a`), remove (`d`), reorder (`[` / `]`).
+- **Sections** — list, add, and rename (renames cascade to all exercises).
+- Saving validates first: sets referencing missing exercise numbers are flagged with an option to strip them.
 
 ### Testing the stretch reminder
 
-1. Select an interval (20/45/60 min) in the reminder row
+1. Select an interval (25/50/60 min) in the reminder row
 2. Click `▶ START` — the main timer display counts down
 3. Try `⏸ PAUSE` and `↺ RESET`
 4. When the countdown hits zero, an alarm plays and voice says it's time to stretch
@@ -112,7 +137,7 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 
 1. Use `◀` / `▶` to cycle between *Building*, *Committing*, and *Pushing*
 2. Click `▶ START SET` to play the current set on demand
-3. To test auto-start on reminder fire, run `window.workoutTimer.reminder.start(0.05)` in the console — the next set starts automatically when it fires
+3. To test auto-advance on reminder fire: `window.workoutTimer.reminder.start(0.05)` in the console
 
 ---
 
@@ -122,6 +147,7 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 - **Web Speech API** — voice guidance
 - **Web Notifications API** — stretch reminders via service worker
 - **Service Worker** — offline support and PWA installability
+- **nginx:alpine + Docker** — self-hosting
 - **JetBrains Mono** — because the font matters
 
 ---
@@ -129,7 +155,10 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ## Roadmap
 
 - [x] Stretch reminder countdown with start/pause/reset
-- [x] Create the concept of a "Set" — curated groups of exercises, auto-started by the reminder
+- [x] Sets — curated exercise groups, auto-queued by the reminder
+- [x] Background-tab resilience — wall-clock timers survive browser throttling
+- [x] Backoffice TUI — manage exercises/sets/sections without editing JS by hand
+- [x] Docker self-hosting
 - [ ] More exercises and sets — eyes, hands, full body...
 
 ---
@@ -143,8 +172,6 @@ window.workoutTimer.reminder.start(0.05) // fires in ~3 seconds
 ## Credits
 
 Forked from [highflyer910/devstretch](https://github.com/highflyer910/devstretch) — the original project by [@highflyer910](https://github.com/highflyer910).
-
-**[🚀 Live Demo (original)](https://devstretch.vercel.app)**
 
 ---
 
