@@ -1,5 +1,6 @@
 .git
 .githooks
+up.ps1
 .gitattributes
 .vercelignore
 .claude.local.md
