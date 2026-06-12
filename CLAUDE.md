@@ -61,24 +61,36 @@ Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`,
 
 To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
 
-## Docker
+## Docker & local ops
 
-The app is self-hostable via Docker. The image is `nginx:alpine` with the Node binary injected from `node:alpine` (latest) for the backoffice TUI.
+The app is self-hostable via Docker. The image is `nginx:alpine` with the Node binary injected from `node:alpine` (latest) for the backoffice TUI. Port **7300**.
+
+### Makefile targets
+
+| Target | What it does |
+|--------|-------------|
+| `make up` | `portless proxy start` → `docker compose up -d --build` → `portless alias devstrechplus 7300` |
+| `make down` | Stop and remove the container |
+| `make build` | Rebuild image without starting |
+| `make restart` | Restart container, no rebuild |
+| `make logs` | `docker compose logs -f` |
+| `make backoffice` | `docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js` |
+| `make clean` | Remove container, image, and volumes |
+
+`up.ps1` is the Windows equivalent of `make up` for machines without `make`.
+
+### Backoffice inside Docker
 
 ```bash
-# Start (port 7300)
-docker compose up -d --build
-
-# Update content after editing exercises.js
-docker compose up -d --build
-
-# Run the backoffice TUI against the live container
-docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js
+make backoffice
 ```
 
-The `-w /usr/share/nginx/html` flag sets the working directory so the backoffice finds `exercises.js` there. Edits are served immediately by nginx — no rebuild needed. Commit the updated `exercises.js` afterwards to keep git in sync.
+The `-w /usr/share/nginx/html` working directory is what lets `findDataFile()` locate `exercises.js`. Edits are served immediately by nginx — no rebuild needed. Commit the updated `exercises.js` afterwards to keep git in sync.
 
-`tools/` is excluded from the Vercel deploy via `.vercelignore`. Only `tools/backoffice/cli.js` is copied into the Docker image (via `.dockerignore` negation rule).
+### Ignore files
+
+- `.vercelignore` — keeps `tools/`, `docs/`, `Makefile`, `up.ps1`, and all Docker files out of Vercel deploys
+- `.dockerignore` — keeps `tools/` out of the image except `tools/backoffice/cli.js` (negation rule)
 
 ## Plans & Design Docs
 

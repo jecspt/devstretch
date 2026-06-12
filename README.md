@@ -70,16 +70,29 @@ Then open `http://localhost:8080`. Hard-refresh (`Ctrl+Shift+R`) after changes t
 ```bash
 git clone <repo>
 cd devstretch
-docker compose up -d --build
-# → http://localhost:7300
+make up
+# or on Windows without make:
+.\up.ps1
 ```
 
-The container uses `nginx:alpine` and runs on port **7300**. `restart: always` means it survives reboots and crashes automatically.
+The container uses `nginx:alpine` and runs on port **7300**. `restart: always` means it survives reboots and crashes automatically. Both commands also register a [portless](https://github.com/vercel-labs/portless) alias so the app is reachable at `https://devstrechplus.localhost` in addition to `http://localhost:7300`.
+
+#### Makefile targets
+
+| Target | What it does |
+|--------|-------------|
+| `make up` | Build image, start container, register portless alias |
+| `make down` | Stop and remove the container |
+| `make build` | Rebuild the image without starting |
+| `make restart` | Restart the container (no rebuild) |
+| `make logs` | Tail container logs |
+| `make backoffice` | Open the backoffice TUI inside the running container |
+| `make clean` | Stop container and remove image and volumes |
 
 To update content after editing `exercises.js`:
 
 ```bash
-docker compose up -d --build   # rebuilds the image with the new file
+make up   # rebuilds the image with the new file
 ```
 
 ### Versioning
@@ -109,6 +122,8 @@ node tools/backoffice/cli.js
 **Inside the running Docker container:**
 
 ```bash
+make backoffice
+# or manually:
 docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js
 ```
 

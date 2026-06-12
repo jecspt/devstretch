@@ -3,3 +3,9 @@
 tools
 docs
 CLAUDE.md
+Makefile
+up.ps1
+Dockerfile
+docker-compose.yml
+nginx.conf
+.dockerignore

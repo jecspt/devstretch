@@ -4,4 +4,4 @@ services:
     container_name: devstretch-plus
     restart: always          # auto-start on boot / restart on crash
     ports:
-      - "7331:80"            # 1337 reversed — http://localhost:7331
+      - "7300:80"            # 1337 reversed — http://localhost:7300
