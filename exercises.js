@@ -140,6 +140,6 @@ const SETS = [
 
     { number: 1, name: "Building", exercises: [2, 3, 9, 10, 11, 8, 17, 18] },
     { number: 2, name: "Committing", exercises: [2, 1, 9, 12, 15, 16, 11, 17, 18] },
-    { number: 3, name: "Introspection", exercises: [2, 11, 7, 8, 17, 18] },
+    { number: 3, name: "Introspection", exercises: [2, 11, 8, 17, 18] },
     { number: 4, name: "Pushing", exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
 ];
