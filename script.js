@@ -517,6 +517,7 @@ class WorkoutTimer {
 
     async _reminderStart() {
         const mins = parseInt(this.reminderSelect.value);
+        this._clearNagTimer(); // always kill any pending nag before starting a fresh cycle
         if (this.reminder.state === 'paused') {
             this.reminder.resume();
         } else {
