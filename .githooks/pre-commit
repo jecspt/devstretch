@@ -1,7 +1,8 @@
 #!/bin/sh
-# Auto-bump the patch version in version.js on every commit to master.
-# version.js is the single source of truth: the UI and the service worker
-# CACHE_NAME both read APP_VERSION, so bumping it also busts the SW cache.
+# Auto-bump the patch version in version.js AND sw.js on every commit to master.
+# Both files define APP_VERSION: version.js drives the UI display; sw.js needs
+# its own copy so its bytes change and the browser detects service worker updates.
+# sw.js bytes changing → browser installs new SW → new CACHE_NAME → old cache evicted.
 #
 # Enabled via: git config core.hooksPath .githooks
 # Skipped when: not on master, merge in progress, or version.js already staged
@@ -29,5 +30,6 @@ patch=${rest#*.}
 new="$major.$minor.$((patch + 1))"
 
 sed -i "s/const APP_VERSION = '$current';/const APP_VERSION = '$new';/" version.js
-git add version.js
+sed -i "s/const APP_VERSION = '$current';/const APP_VERSION = '$new';/" sw.js
+git add version.js sw.js
 echo "pre-commit: APP_VERSION bumped $current -> $new"

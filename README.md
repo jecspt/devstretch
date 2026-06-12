@@ -97,7 +97,7 @@ make up   # rebuilds the image with the new file
 
 ### Versioning
 
-The app version lives in a single place: `APP_VERSION` in `version.js`. The UI (boot screen, header, footer) and the service worker cache name (`devstretch-plus-v<version>`) all derive from it, so a bump automatically invalidates the offline cache for returning users.
+The app version is stored in two places that are always kept in sync: `version.js` (read by the UI) and `sw.js` (hardcoded directly). `sw.js` owns its own copy because the browser's service worker update check does a **byte-diff on `sw.js`** — if `sw.js` never changes bytes, users stay on the old cached version forever. When `sw.js` changes, the browser installs a new service worker with a new `CACHE_NAME`, evicting the old cache automatically.
 
 The patch version is auto-bumped by a git `pre-commit` hook on every commit to `master`. Enable it once per clone:
 
