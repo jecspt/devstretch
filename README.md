@@ -89,7 +89,7 @@ The container uses `nginx:alpine` and runs on port **7300**. `restart: always` m
 | `make backoffice` | Open the backoffice TUI inside the running container |
 | `make clean` | Stop container and remove image and volumes |
 
-To update content after editing `exercises.js`:
+To update content after editing `exercises.json`:
 
 ```bash
 make up   # rebuilds the image with the new file
@@ -109,7 +109,7 @@ To bump minor/major instead, edit `version.js` in the same commit — the hook s
 
 ### Backoffice (content management TUI)
 
-A zero-dependency terminal UI for editing exercises, sets, and sections without touching `exercises.js` by hand.
+A zero-dependency terminal UI for editing exercises, sets, and sections without touching `exercises.json` by hand.
 
 **Locally:**
 
@@ -127,7 +127,7 @@ make backoffice
 docker exec -it -w /usr/share/nginx/html devstretch-plus node /app/backoffice/cli.js
 ```
 
-Edits made inside the container take effect immediately (nginx serves the file live). Commit the updated `exercises.js` afterwards to keep git and the image in sync.
+Edits made inside the container take effect immediately (nginx serves the file live). Commit the updated `exercises.json` afterwards to keep git and the image in sync.
 
 Features:
 - **Exercises** — table view; edit any field inline, pick the section from a dropdown (or create a new one), add/delete. Renumbering an exercise updates every set that references it.

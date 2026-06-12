@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
  * DevStretch Plus backoffice — zero-dependency terminal UI for managing
- * the EXERCISES and SETS data in exercises.js.
+ * the exercises and sets data in exercises.json.
  *
  * Run from anywhere inside the repo:
  *     npx ./tools/backoffice
@@ -14,7 +14,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
 const readline = require('readline');
 
 const REST_TIME = 5; // keep in sync with WorkoutTimer restTime in script.js
@@ -24,7 +23,7 @@ const REST_TIME = 5; // keep in sync with WorkoutTimer restTime in script.js
 function findDataFile() {
     let dir = process.cwd();
     for (;;) {
-        const candidate = path.join(dir, 'exercises.js');
+        const candidate = path.join(dir, 'exercises.json');
         if (fs.existsSync(candidate)) return candidate;
         const parent = path.dirname(dir);
         if (parent === dir) return null;
@@ -33,15 +32,11 @@ function findDataFile() {
 }
 
 function loadData(file) {
-    const src = fs.readFileSync(file, 'utf8');
-    const sandbox = vm.createContext({});
-    vm.runInContext(src + '\nthis.__EXERCISES = EXERCISES; this.__SETS = SETS;', sandbox, {
-        filename: file,
-    });
-    return {
-        exercises: JSON.parse(JSON.stringify(sandbox.__EXERCISES)),
-        sets: JSON.parse(JSON.stringify(sandbox.__SETS)),
-    };
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (!Array.isArray(data.exercises) || !Array.isArray(data.sets)) {
+        throw new Error('expected top-level "exercises" and "sets" arrays');
+    }
+    return data;
 }
 
 function setDurationSecs(set, exercises) {
@@ -53,25 +48,16 @@ function setDurationSecs(set, exercises) {
 }
 
 function serialize(exercises, sets) {
-    const q = JSON.stringify;
-    const sorted = [...exercises].sort((a, b) => a.number - b.number);
-    const exBlocks = sorted.map(e =>
-        '    {\n' +
-        `        number: ${e.number},\n` +
-        `        name: ${q(e.name)},\n` +
-        `        subtitle: ${q(e.subtitle)},\n` +
-        `        duration: ${e.duration},\n` +
-        `        section: ${q(e.section)},\n` +
-        `        emoji: ${q(e.emoji)},\n` +
-        `        description: ${q(e.description)}\n` +
-        '    }'
-    ).join(',\n');
-    const setBlocks = sets.map(s => {
-        const mins = Math.ceil(setDurationSecs(s, exercises) / 60);
-        return `    // ~${mins} min — ${s.exercises.length} exercises\n` +
-            `    { number: ${s.number}, name: ${q(s.name)}, exercises: [${s.exercises.join(', ')}] }`;
-    }).join(',\n');
-    return `const EXERCISES = [\n${exBlocks}\n];\n\nconst SETS = [\n${setBlocks},\n];\n`;
+    const sorted = [...exercises].sort((a, b) => a.number - b.number).map(e => ({
+        number: e.number,
+        name: e.name,
+        subtitle: e.subtitle,
+        duration: e.duration,
+        section: e.section,
+        emoji: e.emoji,
+        description: e.description,
+    }));
+    return JSON.stringify({ exercises: sorted, sets }, null, 4) + '\n';
 }
 
 function danglingRefs(data) {
@@ -534,7 +520,7 @@ async function save() {
 }
 
 async function mainMenu() {
-    const options = ['Exercises', 'Sets', 'Sections', 'Save to exercises.js', 'Quit'];
+    const options = ['Exercises', 'Sets', 'Sections', 'Save to exercises.json', 'Quit'];
     let sel = 0;
     for (;;) {
         const issues = danglingRefs(state.data);
@@ -577,7 +563,7 @@ async function main() {
     }
     state.file = findDataFile();
     if (!state.file) {
-        console.error('Could not find exercises.js — run this from inside the DevStretch Plus repo.');
+        console.error('Could not find exercises.json — run this from inside the DevStretch Plus repo.');
         process.exit(1);
     }
     try {

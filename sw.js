@@ -1,12 +1,12 @@
 // auto-bumped by .githooks/pre-commit — must change bytes so the browser detects SW updates
-const APP_VERSION = '1.1.16';
+const APP_VERSION = '1.1.17';
 const CACHE_NAME = `devstretch-plus-v${APP_VERSION}`;
 const ASSETS = [
     '/',
     '/index.html',
     '/style.css',
     '/version.js',
-    '/exercises.js',
+    '/exercises.json',
     '/notifications.js',
     '/script.js',
     '/pwa.js',

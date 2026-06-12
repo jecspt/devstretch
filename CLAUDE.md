@@ -21,11 +21,11 @@ Scripts load in this order (all `defer`, so DOMContentLoaded fires after all are
 
 0. **`version.js`** — declares one global: `APP_VERSION`, used by `script.js` to fill every `[data-app-version]` element in `index.html`. **`sw.js` has its own hardcoded copy of `APP_VERSION`** (not imported) so that its bytes change on every version bump — the browser's service worker update algorithm does a byte-diff on `sw.js`, so if `sw.js` never changes, users stay on the old cached version forever. The patch version is auto-bumped by `.githooks/pre-commit` in **both** `version.js` and `sw.js` on every commit to `master` (enable once per clone with `git config core.hooksPath .githooks`); the hook skips when `version.js` is already staged, which is how minor/major bumps are done manually.
 
-1. **`exercises.js`** — declares two globals: `EXERCISES` (13 plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `SETS` (3 progressive groups — *Building* ~5 min, *Committing* ~5 min, *Pushing* ~10 min). Both are the single source of truth for workout content and structure. Exercise numbers are non-contiguous (gaps exist from past renumbering) — the runtime handles this via `.find()`, not array indexing.
+1. **`exercises.json`** — pure data file (not a script) with two top-level arrays: `exercises` (plain objects, each with `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, `description`) and `sets` (progressive groups, each with `number`, `name`, `exercises`). It is the single source of truth for workout content and structure. `script.js` fetches it on DOMContentLoaded, assigns the `EXERCISES`/`SETS` globals from it, and only then constructs `WorkoutTimer` — nothing may touch those globals before the fetch resolves. Exercise numbers are non-contiguous (gaps exist from past renumbering) — the runtime handles this via `.find()`, not array indexing.
 
 2. **`notifications.js`** — defines two classes: `NotificationManager` (Web Notifications permission + `showNotification` via service worker with `new Notification()` fallback) and `ReminderTimer` (standalone countdown with states `idle → running → paused → fired`; fires callbacks for sound/speech/notification when it hits zero).
 
-3. **`script.js`** — defines `WorkoutTimer` class, instantiated as `window.workoutTimer` on DOMContentLoaded. Owns all timer state, set-based exercise playback (active → rest → next exercise → set complete), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Also holds a `ReminderTimer` instance; wires its `onTick`/`onComplete` callbacks, renders its countdown in the shared `#timerDisplay` when idle, and auto-starts the next set when the reminder fires. Starting a set calls `this.reminder.reset()` — the two timers are mutually exclusive.
+3. **`script.js`** — declares the `EXERCISES`/`SETS` globals (empty until `exercises.json` is fetched) and defines the `WorkoutTimer` class, instantiated as `window.workoutTimer` once the fetch resolves. Owns all timer state, set-based exercise playback (active → rest → next exercise → set complete), Web Speech API voice guidance, Web Audio for sound effects, and the Screen Wake Lock. Also holds a `ReminderTimer` instance; wires its `onTick`/`onComplete` callbacks, renders its countdown in the shared `#timerDisplay` when idle, and auto-starts the next set when the reminder fires. Starting a set calls `this.reminder.reset()` — the two timers are mutually exclusive.
 
 4. **`pwa.js`** — registers `sw.js` as a service worker and handles the `beforeinstallprompt` event to show/hide the `#installBtn`.
 
@@ -39,7 +39,7 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 **Nag timer**: after the reminder fires while the workout is idle, `_startNagTimer()` schedules a `setTimeout` every 3 minutes to re-notify the user. `_clearNagTimer()` cancels it. The nag is cleared by `start()`, `reset()`, `_reminderReset()`, and `_reminderStart()` — any action that represents "I acknowledged this" must call `_clearNagTimer()`.
 
-**Sets** (`exercises.js` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, the user must click START SET manually.
+**Sets** (`exercises.json` + `script.js`): `currentSetIndex` tracks which set is queued; `activeSetIndex` snapshots it at `start()` and stays frozen for the life of the session. `_resolveSetExercises()` rebuilds `this.exercises` from `SETS[currentSetIndex].exercises` (mapped to full `EXERCISES` objects, filtered to drop any unmatched numbers). When `ReminderTimer.onComplete` fires, `currentSetIndex` advances — if a set is running, `tick()` detects the divergence (`currentSetIndex !== activeSetIndex`) at the next exercise boundary and calls `completeSet()` instead of continuing; if idle, the user must click START SET manually.
 
 **Timer state machine** (`WorkoutTimer` in `script.js`): `isRunning` + `isResting` + `currentExerciseIndex` + `currentTime` fully define the session state. `_step()` decrements `currentTime` by one second and handles the transitions: active exercise → rest period → next exercise → set complete.
 
@@ -53,13 +53,13 @@ To test the reminder: serve the app, open `http://localhost:8080`, hard-refresh 
 
 ## Adding or Modifying Exercises
 
-Edit the `EXERCISES` array in `exercises.js`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 5` (seconds), hardcoded in the constructor — a single voice cue fires at exercise end ("Prepare for next exercise." / "Prepare for next iteration." on the last exercise) with no countdown during the break.
+Edit the `exercises` array in `exercises.json`. Each entry needs `number`, `name`, `subtitle`, `duration` (seconds), `section`, `emoji`, and `description`. Rest period between exercises is `this.restTime = 5` (seconds), hardcoded in the constructor — a single voice cue fires at exercise end ("Prepare for next exercise." / "Prepare for next iteration." on the last exercise) with no countdown during the break.
 
-**Preferred way**: use the backoffice TUI — `npx ./tools/backoffice` (zero-dependency Node TUI in `tools/backoffice/cli.js`). It parses `exercises.js` in a `vm` sandbox, edits in memory, and regenerates the whole file on save. It validates dangling set→exercise references before saving. Can also be run inside the Docker container (see Docker section below).
+**Preferred way**: use the backoffice TUI — `npx ./tools/backoffice` (zero-dependency Node TUI in `tools/backoffice/cli.js`). It reads `exercises.json` with `JSON.parse`, edits in memory, and rewrites the whole file on save. It validates dangling set→exercise references before saving. Can also be run inside the Docker container (see Docker section below).
 
 **Exercise numbers are non-contiguous** — gaps are intentional from past refactors. Do not assume `EXERCISES[n]` is exercise number `n`; always use `.find(e => e.number === n)`.
 
-To add or change **Sets**, edit the `SETS` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
+To add or change **Sets**, edit the `sets` array in the same file. Each entry needs `number`, `name`, and `exercises` (an ordered array of exercise `number` values). `_resolveSetExercises()` in `script.js` maps these numbers to full `EXERCISES` objects at runtime — unmatched numbers are silently dropped (`.filter(Boolean)`). Set duration and exercise count are computed on the fly; no other changes are needed.
 
 ## Docker & local ops
 
@@ -85,7 +85,7 @@ The app is self-hostable via Docker. The image is `nginx:alpine` with the Node b
 make backoffice
 ```
 
-The `-w /usr/share/nginx/html` working directory is what lets `findDataFile()` locate `exercises.js`. Edits are served immediately by nginx — no rebuild needed. Commit the updated `exercises.js` afterwards to keep git in sync.
+The `-w /usr/share/nginx/html` working directory is what lets `findDataFile()` locate `exercises.json`. Edits are served immediately by nginx — no rebuild needed. Commit the updated `exercises.json` afterwards to keep git in sync.
 
 ### Ignore files
 

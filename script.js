@@ -1,3 +1,7 @@
+// Workout content — populated from exercises.json before WorkoutTimer is constructed
+let EXERCISES = [];
+let SETS = [];
+
 class WorkoutTimer {
     constructor() {
         this.currentSetIndex = 0;
@@ -690,5 +694,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // 'default' = not yet asked — keep the existing ⚠ permission req
     }
 
-    window.workoutTimer = new WorkoutTimer();
+    fetch('exercises.json')
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            EXERCISES = data.exercises;
+            SETS = data.sets;
+            window.workoutTimer = new WorkoutTimer();
+        })
+        .catch(err => {
+            console.error('Failed to load exercises.json:', err);
+            const statusLine = document.getElementById('statusLine');
+            if (statusLine) statusLine.textContent = '> FATAL: failed to load exercise data. Hard-refresh (Ctrl+Shift+R).';
+        });
 });
