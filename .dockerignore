@@ -1,0 +1,11 @@
+.git
+.githooks
+.gitattributes
+.vercelignore
+.claude.local.md
+CLAUDE.md
+README.md
+tools
+docs
+node_modules
+*.md
