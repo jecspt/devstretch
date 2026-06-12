@@ -55,7 +55,7 @@ const EXERCISES = [
     },
     {
         number: 10,
-        name: "Lint Your Posture",
+        name: "Lint Your Posture - Shoulder Rolls",
         subtitle: "Posture Check",
         duration: 20,
         section: "🧘  SHUTDOWN SEQUENCE",
@@ -64,16 +64,16 @@ const EXERCISES = [
     },
     {
         number: 11,
-        name: "git commit --water",
+        name: "git remove pee && git add water",
         subtitle: "Hydration Reminder",
         duration: 15,
         section: "🧘  SHUTDOWN SEQUENCE",
         emoji: "💧",
-        description: "Drink water. Right now. Seriously. git commit -m 'stay hydrated' && git push. Your brain is 75% water and you have not been watering it. This commit is non-negotiable."
+        description: "Go pee and drink water. Right now. Seriously. git commit -m 'stay hydrated' && git push. Your brain is 75% water and you have not been watering it. This commit is non-negotiable."
     },
     {
         number: 12,
-        name: "Full Stack Reach",
+        name: "Full Stack Reach with Deep Squat Rotation",
         subtitle: "Deep Squat Rotation",
         duration: 50,
         section: "⚙️  CORE SYSTEMS",
@@ -100,7 +100,7 @@ const EXERCISES = [
     },
     {
         number: 15,
-        name: "Crawl Protocol",
+        name: "Spider Crawl Protocol",
         subtitle: "Quadruped Hold",
         duration: 30,
         section: "🦴  BACKEND MAINTENANCE",
@@ -109,20 +109,37 @@ const EXERCISES = [
     },
     {
         number: 16,
-        name: "Stretch Protocol",
+        name: "Cat Stretch Protocol",
         subtitle: "Cat, Cat-Cow Stretch",
         duration: 30,
         section: "🦴  BACKEND MAINTENANCE",
         emoji: "😸",
         description: "Well, Cat stretch: on all fours, round your back up like a cat. Hold 5 sec. Then Cow stretch: drop belly down, lift chest and tailbone up. Hold 5 sec. Your backend systems need regular stretching to prevent stiffness and downtime."
+    },
+    {
+        number: 17,
+        name: "git pull fresh air",
+        subtitle: "Breath of Fresh Air",
+        duration: 30,
+        section: "🧘  SHUTDOWN SEQUENCE",
+        emoji: "😮‍💨",
+        description: "Step outside or open a window. Take 3 deep breaths of fresh air. Inhale the new ideas, exhale the stress and fatigue. A breath of fresh air can be the best commit message for your mental state."
+    },
+    {
+        number: 18,
+        name: "Commiting Protocol - Time to commit more work?!",
+        subtitle: "Time to commit more work?!",
+        duration: 30,
+        section: "🧘  SHUTDOWN SEQUENCE",
+        emoji: "👨‍💻",
+        description: "Time to commit more work?! Take a moment to reflect on what you've accomplished. Celebrate the wins, no matter how small. Then, if you have the energy, plan your next commit. But remember, it's okay to push an empty commit just to acknowledge the hard work you've done."
     }
 ];
 
 const SETS = [
-    // ~5 min — 6 exercises
-    { number: 1, name: "Building", exercises: [2, 3, 9, 10, 11, 8] },
-    // ~5 min — 7 exercises
-    { number: 2, name: "Committing", exercises: [2, 1, 9, 12, 15, 16, 11] },
-    // ~10 min — 8 exercises
-    { number: 3, name: "Pushing", exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
+
+    { number: 1, name: "Building", exercises: [2, 3, 9, 10, 11, 8, 17, 18] },
+    { number: 2, name: "Committing", exercises: [2, 1, 9, 12, 15, 16, 11, 17, 18] },
+    { number: 3, name: "Introspection", exercises: [2, 11, 7, 8, 17, 18] },
+    { number: 4, name: "Pushing", exercises: [1, 2, 12, 13, 14, 16, 11, 7] },
 ];
