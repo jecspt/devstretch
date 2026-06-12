@@ -19,6 +19,7 @@ class WorkoutTimer {
         this.timer = null;
         this.soundEnabled = true;
         this.voiceEnabled = true;
+        this.autoStart = false; // when true, sets and the reminder chain hands-free
 
         this.femaleVoice = null;
         window.speechSynthesis.onvoiceschanged = () => {
@@ -90,6 +91,7 @@ class WorkoutTimer {
         this.nextBtn = document.getElementById('nextBtn');
         this.soundToggle = document.getElementById('soundToggle');
         this.voiceToggle = document.getElementById('voiceToggle');
+        this.autoStartToggle = document.getElementById('autoStartToggle');
         this.reminderSelect = document.getElementById('reminderSelect');
         this.remStartBtn = document.getElementById('remStartBtn');
         this.remPauseBtn = document.getElementById('remPauseBtn');
@@ -116,6 +118,7 @@ class WorkoutTimer {
         this.nextBtn.addEventListener('click', () => this.skipTo(this.currentExerciseIndex + 1));
         this.soundToggle.addEventListener('click', () => this.toggleSound());
         this.voiceToggle.addEventListener('click', () => this.toggleVoice());
+        this.autoStartToggle.addEventListener('click', () => this.toggleAutoStart());
         this.remStartBtn.addEventListener('click', () => this._reminderStart());
         this.remPauseBtn.addEventListener('click', () => this._reminderPause());
         this.remResetBtn.addEventListener('click', () => this._reminderReset());
@@ -175,12 +178,12 @@ class WorkoutTimer {
         // Snapshot which set this session belongs to and resolve its exercises
         this.activeSetIndex = this.currentSetIndex;
         this._resolveSetExercises();
-        this._updateSetNavButtons();
 
         this.isRunning = true;
         this.startBtn.style.display = 'none';
         this.pauseBtn.style.display = 'flex';
         this.updateNavButtons();
+        this._updateSetNavButtons(); // after isRunning=true so SKIP SET enables
         this.requestWakeLock();
 
         if (this.currentExerciseIndex === 0 && this.currentTime === 0 && !this.isResting) {
@@ -481,8 +484,14 @@ class WorkoutTimer {
             this._updateSetNavButtons();
 
             const nextName = SETS[nextIndex].name;
-            this.speak(`${setName} complete. Excellent work! Up next: ${nextName}. Click Start Set when ready.`);
-            this.setStatus(`SET COMPLETE — advancing to Set ${SETS[nextIndex].number}: ${nextName}`);
+            if (this.autoStart) {
+                // Chain hands-free: start the inter-set reminder, which auto-starts the next set when it fires
+                this.speak(`${setName} complete! Up next: ${nextName}. Reminder countdown started.`);
+                this._reminderStart(); // owns its own status line
+            } else {
+                this.speak(`${setName} complete. Excellent work! Up next: ${nextName}. Click Start Set when ready.`);
+                this.setStatus(`SET COMPLETE — advancing to Set ${SETS[nextIndex].number}: ${nextName}`);
+            }
         }
     }
 
@@ -516,6 +525,15 @@ class WorkoutTimer {
         } else {
             window.speechSynthesis.cancel();
         }
+    }
+
+    toggleAutoStart() {
+        this.autoStart = !this.autoStart;
+        this.autoStartToggle.textContent = this.autoStart ? '🔁 AUTO:ON' : '🔁 AUTO:OFF';
+        this.autoStartToggle.classList.toggle('toggle-on', this.autoStart);
+        this.setStatus(this.autoStart
+            ? 'Auto-start ON: reminder fires → next set begins, set ends → reminder restarts.'
+            : 'Auto-start OFF: start each set and reminder yourself.');
     }
 
     async _reminderStart() {
@@ -567,9 +585,15 @@ class WorkoutTimer {
             this.playSound('complete');
             this.speak('Time to stretch! Finish this exercise, then rest.');
             this.setStatus('⏰ Stretch time! Finishing current exercise first...');
-        } else {
-            // Auto-start the queued set when the reminder fires
+        } else if (this.autoStart) {
+            // Auto-start the queued set only when auto-start is enabled
             this.start();
+        } else {
+            // Manual mode — notify and nag, wait for the user to click START SET
+            this.playSound('complete');
+            this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready when you are.`);
+            this.setStatus('⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)');
+            this._startNagTimer();
         }
     }
 
