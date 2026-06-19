@@ -4,15 +4,15 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Write-Host '▸ Starting portless proxy...' -ForegroundColor Green
-portless proxy start 2>$null
-# proxy start exits non-zero if already running — that's fine, continue
-
 Write-Host '▸ Building and starting container...' -ForegroundColor Green
 docker compose up -d --build
 
 Write-Host '▸ Registering portless alias...' -ForegroundColor Green
 portless alias devstrechplus 7300
+
+Write-Host '▸ Starting portless proxy...' -ForegroundColor Green
+portless proxy start
+# proxy start exits non-zero if already running — that's fine, continue
 
 Write-Host ''
 Write-Host '✓ DevStretch Plus is running' -ForegroundColor Green

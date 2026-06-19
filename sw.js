@@ -11,11 +11,12 @@ const ASSETS = [
     '/script.js',
     '/pwa.js',
     '/manifest.json',
-    '/sounds/beep-07a.wav',
+    '/sounds/Alarm03.wav',
     '/sounds/beep-01a.wav',
+    '/sounds/beep-07a.wav',    
     '/sounds/pause.wav',
-    '/sounds/button-2.wav',
-    '/sounds/button-3.wav'
+    '/sounds/complete.wav',
+    '/sounds/long-bell.wav'
 ];
 
 self.addEventListener('install', (e) => {
@@ -28,7 +29,9 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+            Promise.all(
+                keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+            )
         )
     );
     self.clients.claim();
@@ -36,6 +39,6 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
     e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
+        caches.match(e.request).then(response => response || fetch(e.request))
     );
 });

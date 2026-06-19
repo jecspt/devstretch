@@ -4,7 +4,7 @@
             "number": 1,
             "name": "Boot Sequence - Stand up to stretch and move",
             "subtitle": "Stand Up + Neck + Shoulders + Wrists",
-            "duration": 60,
+            "duration": 30,
             "section": "🧘  BOOT SEQUENCE",
             "emoji": "🚀",
             "description": "1. Stand up 2. Neck — turn left/right 3. Shoulders — roll forward and backwards 4. Wrists — rotate, extend arm, pull fingers back."
@@ -13,7 +13,7 @@
             "number": 2,
             "name": "Clear Cache",
             "subtitle": "Eye Break: 10-10-10",
-            "duration": 15,
+            "duration": 10,
             "section": "🧘  BOOT SEQUENCE",
             "emoji": "👁️",
             "description": "Close eyes for 10 seconds. Open, focus on something 20 feet away for 10 seconds. Repeat 3 times. Flush the pixel buffer. Reduce eye strain before it becomes a bug."
@@ -76,7 +76,7 @@
             "number": 12,
             "name": "Full Stack Reach with Deep Squat Rotation",
             "subtitle": "Deep Squat Rotation",
-            "duration": 50,
+            "duration": 30,
             "section": "⚙️  CORE SYSTEMS",
             "emoji": "📡",
             "description": "Feet wide, drop into a deep squat. Place one hand on the ground, reach the other arm straight up while rotating your chest toward the ceiling. Hold 5 sec. Switch sides. 5 reps each. Full-stack mobility — from the lowest layer all the way to the top of the architecture."
@@ -130,10 +130,19 @@
             "number": 18,
             "name": "Commiting Protocol - Time to commit more work?!",
             "subtitle": "Time to commit more work?!",
-            "duration": 30,
+            "duration": 10,
             "section": "🧘  SHUTDOWN SEQUENCE",
             "emoji": "👨‍💻",
             "description": "Time to commit more work?! Take a moment to reflect on what you've accomplished. Celebrate the wins, no matter how small. Then, if you have the energy, plan your next commit. But remember, it's okay to push an empty commit just to acknowledge the hard work you've done."
+        },
+        {
+            "number": 19,
+            "name": "Building the Core - Pushups",
+            "subtitle": "Pushups",
+            "duration": 60,
+            "section": "⚙️  CORE SYSTEMS",
+            "emoji": "💪",
+            "description": "Start in a high plank position with hands shoulder-width apart. Lower your body until your chest nearly touches the floor. Push back up to the starting position. 3 sets × 15 reps. Strengthen the core of your body and your codebase."
         }
     ],
     "sets": [
@@ -155,7 +164,6 @@
             "number": 2,
             "name": "Committing",
             "exercises": [
-                2,
                 1,
                 9,
                 12,
@@ -171,9 +179,11 @@
             "name": "Introspection",
             "exercises": [
                 2,
-                11,
+                3,
+                9,
+                10,
                 8,
-                17,
+                11,
                 18
             ]
         },
@@ -182,11 +192,13 @@
             "name": "Pushing",
             "exercises": [
                 1,
-                2,
+                9,
+                10,
                 12,
                 13,
                 14,
                 16,
+                19,
                 11,
                 7
             ]

@@ -59,11 +59,12 @@ class WorkoutTimer {
         }
 
         this.sounds = {
-            beep: new Audio('sounds/beep-07a.wav'),
-            start: new Audio('sounds/beep-01a.wav'),
-            complete: new Audio('sounds/button-2.wav'),
+            beep: new Audio('sounds/beep-01a.wav'),
+            start: new Audio('sounds/beep-07a.wav'),
+            complete: new Audio('sounds/complete.wav'),
             pause: new Audio('sounds/pause.wav'),
-            reset: new Audio('sounds/button-3.wav')
+            reset: new Audio('sounds/Alarm03.wav'),
+            bell: new Audio('sounds/long-bell.wav')
         };
 
         this.initElements();
@@ -594,7 +595,7 @@ class WorkoutTimer {
             this.start();
         } else {
             // Manual mode — notify and nag, wait for the user to click START SET
-            this.playSound('complete');
+            this.playSound('bell');
             this.speak(`Time to stretch! ${SETS[this.currentSetIndex].name} is ready when you are.`);
             this.setStatus('⏰ Stretch time! Click START SET, or ↺ to dismiss (nag in 3 min)');
             this._startNagTimer();
