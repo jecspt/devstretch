@@ -49,7 +49,7 @@
             "number": 9,
             "name": "Extend Your Reach",
             "subtitle": "Overhead Arm Stretch",
-            "duration": 30,
+            "duration": 15,
             "section": "🧘  SHUTDOWN SEQUENCE",
             "emoji": "🙌",
             "description": "Reach both arms overhead, interlace fingers, stretch tall. Lean gently side to side. 20 sec each direction. Extending your physical API endpoints after a long session."
@@ -58,7 +58,7 @@
             "number": 10,
             "name": "Lint Your Posture - Shoulder Rolls",
             "subtitle": "Posture Check",
-            "duration": 20,
+            "duration": 15,
             "section": "🧘  SHUTDOWN SEQUENCE",
             "emoji": "✅",
             "description": "Ears over shoulders. Shoulders back and down. Screen at eye level. Feet flat on floor. Hold this correct posture for 20 sec. Run the linter. Fix the warnings. Zero errors."
@@ -128,7 +128,7 @@
         },
         {
             "number": 18,
-            "name": "Commiting Protocol - Time to commit more work?!",
+            "name": "Committing Protocol - Time to commit more work?!",
             "subtitle": "Time to commit more work?!",
             "duration": 10,
             "section": "🧘  SHUTDOWN SEQUENCE",
@@ -143,6 +143,69 @@
             "section": "⚙️  CORE SYSTEMS",
             "emoji": "💪",
             "description": "Start in a high plank position with hands shoulder-width apart. Lower your body until your chest nearly touches the floor. Push back up to the starting position. 3 sets × 15 reps. Strengthen the core of your body and your codebase."
+        },
+        {
+            "number": 20,
+            "name": "Core Deployment - Ab Wheel Rollouts",
+            "subtitle": "Ab Wheel Rollouts",
+            "duration": 40,
+            "section": "⚙️  CORE SYSTEMS",
+            "emoji": "🛞",
+            "description": "Kneel with ab wheel in hands. Roll forward slowly, extending hips and arms, core braced. Roll back with control. 3 sets of 8-12 reps. Protect the rollout. No sagging under load."
+        },
+        {
+            "number": 21,
+            "name": "Backend Stability - Bird Dogs",
+            "subtitle": "Bird Dogs",
+            "duration": 45,
+            "section": "🦴  BACKEND MAINTENANCE",
+            "emoji": "🐕",
+            "description": "Hands and knees, extend right arm + left leg straight. Hold 3 sec, return. Alternate sides. 3 sets of 8-10 per side. Anti-rotation training for a stable core server."
+        },
+        {
+            "number": 22,
+            "name": "Posterior Commit - Barbell Glute Bridge",
+            "subtitle": "Barbell Glute Bridge",
+            "duration": 55,
+            "section": "⚙️  CORE SYSTEMS",
+            "emoji": "🌉",
+            "description": "Supine, bar across hips (use pad). Drive heels, lift hips to full extension, squeeze glutes hard at top for 1 sec. Lower. 3 sets x 10-12. Ship power from the glutes."
+        },
+        {
+            "number": 23,
+            "name": "Log Shipping - Supermans",
+            "subtitle": "Supermans",
+            "duration": 30,
+            "section": "🦴  BACKEND MAINTENANCE",
+            "emoji": "🦸",
+            "description": "Lie face down, arms forward. Lift chest, arms, and legs simultaneously. Hold 2 sec at top. 3 sets x 10-15. Strengthen the lower back erectors that keep your stack upright."
+        },
+        {
+            "number": 24,
+            "name": "Hinge Sync - Band Good Mornings",
+            "subtitle": "Band Good Mornings",
+            "duration": 40,
+            "section": "🦴  BACKEND MAINTENANCE",
+            "emoji": "🔄",
+            "description": "Band under feet, looped behind neck or over shoulders. Hinge hips back with neutral spine, soft knees. Feel hamstring tension. Return by driving hips forward. 3 sets x 10-12. Master the hinge to avoid backend errors."
+        },
+        {
+            "number": 25,
+            "name": "Unstable Core - Stability Ball Planks",
+            "subtitle": "Stability Ball Planks",
+            "duration": 45,
+            "section": "⚙️  CORE SYSTEMS",
+            "emoji": "🔵",
+            "description": "Place forearms or hands on small stability ball in plank. Keep body straight as ball shifts under you. Hold. 3 sets x 20-40 sec. Forces deeper core activation under variable load."
+        },
+        {
+            "number": 26,
+            "name": "Heavy Deploy - Barbell Squats",
+            "subtitle": "Barbell Squats",
+            "duration": 60,
+            "section": "⚙️  CORE SYSTEMS",
+            "emoji": "🏋️",
+            "description": "Bar on traps, brace core, descend until thighs parallel or below, knees track over toes. Drive through midfoot to stand. 3-4 sets x 6-10. Load the system. Then ship it."
         }
     ],
     "sets": [
@@ -192,15 +255,47 @@
             "name": "Pushing",
             "exercises": [
                 1,
-                9,
-                10,
                 12,
                 13,
                 14,
-                16,
+                10,
                 19,
                 11,
-                7
+                16,
+                17,
+                18
+            ]
+        },
+        {
+            "number": 5,
+            "name": "Lifting",
+            "exercises": [
+                1,
+                12,
+                26,
+                20,
+                10,
+                11,
+                22,
+                24,
+                17,
+                18
+            ]
+        },
+        {
+            "number": 6,
+            "name": "Stabilizing",
+            "exercises": [
+                2,
+                9,
+                21,
+                10,
+                20,
+                23,
+                25,
+                11,
+                17,
+                18
             ]
         }
     ]
